@@ -1,0 +1,23 @@
+{
+  "name": "izzi-portal-rosca-reyes",
+  "version": "1.0.0",
+  "description": "Portal para gestion de la Rosca de Reyes",
+  "main": "app.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Yoany",
+  "license": "ISC",
+  "dependencies": {
+    "bcryptjs": "^2.4.3",
+    "body-parser": "^1.18.3",
+    "consign": "^0.1.6",
+    "express": "^4.16.4",
+    "jsonwebtoken": "^8.4.0",
+    "lodash": "^4.17.11",
+    "mongodb": "^3.1.10",
+    "mongoose": "^5.3.16",
+    "morgan": "^1.9.1",
+    "validator": "^10.9.0"
+  }
+}
