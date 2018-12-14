@@ -194,7 +194,8 @@ login = async function (req, res) {
 
 logout = async function (req, res) {
     var token = req.header('x-auth');
-    let empleado = await Empleado.removeToken(token);
+    let tempEmployee = new Empleado();
+    let empleado = await tempEmployee.removeToken(token);
     res.status(200).send({ empleado });
 }
 

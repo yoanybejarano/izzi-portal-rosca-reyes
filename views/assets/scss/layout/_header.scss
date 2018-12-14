@@ -1,0 +1,40 @@
+header {
+  margin: 0 auto;
+  padding: 6px 0;
+  background: white;
+  width: 100%;
+  position: fixed;
+  z-index: 100;
+
+  .stripe{width: 100%;position: absolute;bottom: 0;}
+
+  .container {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    @media (max-width: 575px) {
+      justify-content: center;
+    }
+  }
+
+  figure {width: 154px;height: 69px;}
+
+  nav {
+    display: flex;
+
+    ul {
+      display: flex;
+      margin-right: 100px;
+      font-size: 20px;
+
+      li {
+        &:hover {a {font-weight: bold;}}
+        &:first-child {margin-left: 0;}
+        margin-left: 80px;
+        @media (max-width: 768px) {
+          margin-left: 50px;
+        }
+      }
+    }
+  }
+}

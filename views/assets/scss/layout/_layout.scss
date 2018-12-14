@@ -1,0 +1,152 @@
+main {
+  padding-top: 100px;
+  overflow: hidden;
+  padding-bottom: 150px;
+  @media (max-width: 1320px) {
+    padding-bottom: 0;
+  }
+}
+section{margin-bottom: 80px;}
+
+.hero {
+  .hero-title {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    @media (max-width: 768px) {
+      align-items: center;
+      margin-bottom: 90px;
+      margin-top: 30px;
+      text-align: center;
+    }
+  }
+  .rectangle {
+    width: 494px;
+    height: 395px;
+    background-color: #f47e28;
+    z-index: -1;
+    position: absolute;
+    right: 0;
+    top: -20px;
+    @media (max-width: 890px) {
+      right: -30px;
+    }
+    @media (max-width: 850px) {
+      right: -60px;
+    }
+    @media (max-width: 768px) {
+      right: 0;
+    }
+    @media (max-width: 544px) {
+      width: 248px;
+      height: 222px;
+      right: 90px;
+      top: -14px;
+    }
+    @media (max-width: 474px) {
+      right: 40px;
+    }
+    @media (max-width: 425px) {
+      right: 87px;
+    }
+    @media (max-width: 400px) {
+      right: 70px;
+    }
+    @media (max-width: 375px) {
+      right: 60px;
+    }
+    @media (max-width: 345px) {
+      right: 40px;
+    }
+    @media (max-width: 320px) {
+      right: 35px;
+    }
+  }
+
+  .button{max-width: 240px;}
+
+  .video {
+    width: 495px;
+    height: 355px;
+    @media (max-width: 768px) {
+      margin: 0 auto;
+    }
+    @media (max-width: 544px) {
+      width: 272px;
+      height: 200px;
+    }
+    img {
+      width: 100%;
+    }
+  }
+}
+
+.consulta {
+  .m-l-40 {
+    @media (max-width: 768px) {
+      margin-left: 5px !important;
+    }
+  }
+  button {
+    @media (max-width: 575px) {
+      margin-top: 20px !important;
+    }
+  }
+}
+
+.premios {
+  margin-top: 150px;
+  @media (max-width: 768px) {
+    margin-top: 100px;
+  }
+  .rosca {
+    position: absolute;
+    left: 0;
+    top: -30%;
+    @media (max-width: 1320px) {
+      width: 280px;
+      top: -10%;
+    }
+    @media (max-width: 1200px) {
+      width: 200px;
+      top: 0;
+    }
+    @media (max-width: 1024px) {
+      width: 150px;
+      top: 50px;
+    }
+  }
+}
+
+.mecanica {
+  margin-top: 150px;
+  @media (max-width: 768px) {
+    margin-top: 50px;
+  }
+  .rosca-taza {
+    position: absolute;
+    right: 0;
+    top: 10px;
+    @media (max-width: 1320px) {
+      width: 350px;
+    }
+    @media (max-width: 1200px) {
+      width: 300px;
+    }
+    @media (max-width: 1014px) {
+      width: 250px;
+      top: 50px;
+    }
+  }
+
+  ul {
+    @media (max-width: 995px) {
+      margin-left: 25px;
+    }
+    li {
+      p {
+        margin-bottom: 40px;
+      }
+    }
+  }
+}

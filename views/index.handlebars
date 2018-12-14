@@ -1,0 +1,191 @@
+<main id="Home">
+	<section class="hero relative">
+		<div class="container">
+			<div class="row">
+				<div class="col-12 col-md-5 hero-title">
+					<h1>Gran Rosca <br> de Reyes 2019</h1>
+					<a class="button pink" href="#Dinamica">Dinámica del sorteo</a>
+				</div>
+				<div class="col-12 col-md-7 relative">
+					<div class="video">
+						<img src="https://via.placeholder.com/495x355">
+					</div>
+					<div class="rectangle"></div>
+				</div>
+			</div>
+		</div>
+	</section>
+	<section class="ganadores hidden">
+		<div class="container">
+			<p class="h1">Ganadores</p>
+			<div class="row">
+				<div class="col-12 col-md-6">
+					<div class="card card-full">
+						<div class="card-header">
+							<span class="pink">1er. Lugar</span>
+							<img src="/img/car.svg">
+						</div>
+						<div class="card-content">
+							<b>Diego Leonel Juárez</b> <br>
+							Chevrolet Beat
+						</div>
+					</div>
+				</div>
+				<div class="col-12 col-md-6">
+					<div class="card card-full">
+						<div class="card-header">
+							<span class="blue">2do. Lugar</span>
+							<img src="/img/card-blue.svg">
+						</div>
+						<div class="card-content">
+							<b>Doricela Reyes</b> <br>
+							$50,00 en Monedero de intercambio
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</section>
+	<section class="consulta hidden">
+		<div class="container">
+			<p class="h1 m-b-50">
+				Consulta si eres uno de <br>
+				los afortunados ganadores
+			</p>
+			<div class="row">
+				<div class="col-12 col-sm-7 col-md-5 flex f-col justify-end">
+					<div class="floating-input">
+						<input v-model.lazy="lugar" required type="number" id="search" name="search">
+						<span class="floating-label placeholder">Búsca tu número de empleado</span>
+						<!-- Los dos status de mensajeok -->
+						<!-- <span class="message error">Número de empleado incorrecto</span> -->
+						<span class="message win">Alarcon Cuenca Guadalupe ganaste : $1,000 en un monedero de intercambio</span>
+					</div>
+				</div>
+				<div class="col-12 col-sm-5 col-md-7 flex f-row justify-start align-center">
+					<button class="button m-t-0 m-l-40" type="button" name="button">Buscar</button>
+					<button class="button flat m-t-0 m-l-40" type="button" name="button">Ver todos</button>
+				</div>
+			</div>
+		</div>
+	</section>
+	<div id="Premios"></div>
+	<section class="premios relative">
+		<div class="container">
+			<div class="row">
+				<div class="col-2 tablet-none"></div>
+				<div class="col-12 col-md-10">
+					<p class="h1">Premios</p>
+					<div class="row">
+						<div class="col-6 col-md-4">
+							<div class="card">
+								<div class="card-header">
+									<span class="pink">1</span>
+									<img src="/img/car.svg">
+								</div>
+								<div class="card-content">
+									Automóvil
+								</div>
+							</div>
+						</div>
+						<div class="col-6 col-md-4 card-padding ">
+							<div class="card">
+								<div class="card-header">
+									<span>1</span>
+									<img src="/img/card.svg">
+								</div>
+								<div class="card-content">
+									Monedero <br>
+									de $50,000 pesos
+								</div>
+							</div>
+						</div>
+						<div class="col-6 col-md-4">
+							<div class="card">
+								<div class="card-header">
+									<span>9</span>
+									<img src="/img/card.svg">
+								</div>
+								<div class="card-content">
+									Monederos <br>
+									de $10,000 pesos
+								</div>
+							</div>
+						</div>
+						<div class="col-6 col-md-4">
+							<div class="card">
+								<div class="card-header">
+									<span>9</span>
+									<img src="/img/card.svg">
+								</div>
+								<div class="card-content">
+									Monederos <br>
+									de $5,000 pesos
+								</div>
+							</div>
+						</div>
+						<div class="col-6 col-md-4 card-padding ">
+							<div class="card">
+								<div class="card-header">
+									<span>90</span>
+									<img src="/img/card.svg">
+								</div>
+								<div class="card-content">
+									Monederos <br>
+									de $2,000 pesos
+								</div>
+							</div>
+						</div>
+						<div class="col-6 col-md-4">
+							<div class="card">
+								<div class="card-header">
+									<span>90</span>
+									<img src="/img/card.svg">
+								</div>
+								<div class="card-content">
+									Monedero <br>
+									de $1,000 pesos
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+		<img src="/img/rosca.png" srcset="/img/rosca@2x.png 2x,
+										 img/rosca@3x.png 3x" class="rosca tablet-none">
+	</section>
+	<div id="Dinamica"></div>
+	<section class="mecanica relative">
+		<div class="container">
+			<div class="row">
+				<div class="col-12 col-md-9">
+					<p class="h1">Dinámica</p>
+					<ul>
+						<li class="square-pink">
+							<p>
+								Los ganadores del sorteo serán determinados de acuerdo a los números ganadores del Sorteo Superior de la
+								Lotería Nacional del 2 de febrero de 2018.
+							</p>
+						</li>
+						<li class="square-orange">
+							<p>
+								La publicación de los números ganadores se realizará el 5 de febrero vía correo electrónico y en esta página
+								web.
+							</p>
+						</li>
+						<li class="square-blue">
+							<p class="m-b-0">
+								Si resultas ganador de cualquiera de estos premios, comunícate con tu Coordinador de Recursos Humanos local.
+							</p>
+						</li>
+					</ul>
+				</div>
+				<div class="col-3 tablet-none"></div>
+			</div>
+		</div>
+		<img src="/img/rosca-taza.png" srcset="/img/rosca-taza@2x.png 2x,
+										 img/rosca-taza@3x.png 3x"
+		 class="rosca-taza tablet-none">
+	</section>
+</main>

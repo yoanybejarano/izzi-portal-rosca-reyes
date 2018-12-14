@@ -1,0 +1,10 @@
+footer {
+  @media (max-width: 1200px) {
+    img {
+      width: 100%;
+    }
+  }
+  @media (max-width: 1024px) {
+    margin-top: 0;
+  }
+}

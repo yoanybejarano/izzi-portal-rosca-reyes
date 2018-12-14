@@ -19,3 +19,6 @@ consign()
     .then("models")
     .then("routes")
     .into(app);
+
+let configView = require('./config/views');
+app = configView(app);
