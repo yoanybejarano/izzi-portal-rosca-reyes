@@ -18,7 +18,7 @@ module.exports = function (app) {
             empleados.create(req, res);
         });
 
-    app.route("/empleado/:id")
+    app.route("/empleado/:noEmpleado")
         .all((req, res, next) => {
             // Middleware for preexecution of routes
             delete req.body.id;
@@ -26,7 +26,7 @@ module.exports = function (app) {
         })
         .get((req, res) => {
             // "/empleado/1": Find a empleado
-            empleados.findById(req, res);
+            empleados.findByNoEmpleado(req, res);
         });
 
     app.route("/login")

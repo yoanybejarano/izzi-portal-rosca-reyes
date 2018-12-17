@@ -60,12 +60,12 @@
 						<input v-model.lazy="lugar" required type="number" id="search" name="search">
 						<span class="floating-label placeholder">Búsca tu número de empleado</span>
 						<!-- Los dos status de mensajeok -->
-						<!-- <span class="message error">Número de empleado incorrecto</span> -->
-						<span class="message win">Alarcon Cuenca Guadalupe ganaste : $1,000 en un monedero de intercambio</span>
+						<span id="resultMessageError" class="message error hidden">Número de empleado incorrecto</span>
+						<span id="resultSeachMessage" class="message win"></span>
 					</div>
 				</div>
 				<div class="col-12 col-sm-5 col-md-7 flex f-row justify-start align-center">
-					<button class="button m-t-0 m-l-40" type="button" name="button">Buscar</button>
+					<button id="btnSearchEmployee" class="button m-t-0 m-l-40" type="button" name="button" onclick="consultaPorNumeroEmpleado();">Buscar</button>
 					<button class="button flat m-t-0 m-l-40" type="button" name="button">Ver todos</button>
 				</div>
 			</div>

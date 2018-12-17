@@ -230,6 +230,19 @@ listWinnersEmployees = (req, res) => {
     });
 };
 
+findByNoEmpleado = (req, res) => {
+    Empleado.findOne({ noEmpleado: req.params.noEmpleado }, (err, empleado) => {
+        if (err) {
+            return res.status(500).json({
+                message: 'Error consultando el empleado con el numero ' + req.params.noEmpleado,
+                error: err
+            });
+        }
+        if (!empleado) return res.status(200).send({ message: 'No se encontro empleados con el numero ' + req.params.noEmpleado });
+        return res.status(200).send({ 'empleado': empleado });
+    });
+};
+
 module.exports = {
     Empleado,
     list,
@@ -238,7 +251,8 @@ module.exports = {
     login,
     logout,
     listSelectedEmployees,
-    listWinnersEmployees
+    listWinnersEmployees,
+    findByNoEmpleado
 };
 
 
