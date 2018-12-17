@@ -50,4 +50,29 @@ module.exports = function (app) {
             // "/empleado/1": Find a empleado
             empleados.logout(req, res);
         });
+
+    app.route("/seleccionados")
+        .all((req, res, next) => {
+            // Middleware for preexecution of routes\
+            delete req.body.id;
+            next();
+        })
+        .get((req, res) => {
+            // "/empleado": List Empleado
+            empleados.listSelectedEmployees(req, res);
+        });
+
+    app.route("/premiados")
+        .all((req, res, next) => {
+            // Middleware for preexecution of routes\
+            delete req.body.id;
+            next();
+        })
+        .get((req, res) => {
+            // "/empleado": List Empleado
+            empleados.listWinnersEmployees(req, res);
+        });
+
+
+
 };

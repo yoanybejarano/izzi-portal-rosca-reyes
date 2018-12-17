@@ -194,12 +194,52 @@ login = async function (req, res) {
 
 logout = async function (req, res) {
     var token = req.header('x-auth');
-    let tempEmployee = new Empleado();
+
+    let tempEmployee = await Empleado.findByToken(token).then((empleado) => {
+        if (!empleado) return Promise.reject();
+
+        return empleado;
+    }).catch((e) => {
+        res.status(401).send({ message: 'Necesita autenticarse para acceder a este elemento' });
+    });
     let empleado = await tempEmployee.removeToken(token);
     res.status(200).send({ empleado });
 }
 
-module.exports = { Empleado, list, findById, create, login, logout };
+listSelectedEmployees = (req, res) => {
+    Empleado.find({ "seleccionado": true }, (err, empleados) => {
+        if (err) {
+            return res.status(500).json({
+                message: 'Error consultando los empleados seleccionados.',
+                error: err
+            });
+        }
+        return res.status(200).send({ 'seleccionados': empleados });
+    });
+};
+
+listWinnersEmployees = (req, res) => {
+    Empleado.find({ 'premio': { $nin: [null, ""] } }, (err, empleados) => {
+        if (err) {
+            return res.status(500).json({
+                message: 'Error consultando los empleados seleccionados.',
+                error: err
+            });
+        }
+        return res.status(200).send({ 'premiados': empleados });
+    });
+};
+
+module.exports = {
+    Empleado,
+    list,
+    findById,
+    create,
+    login,
+    logout,
+    listSelectedEmployees,
+    listWinnersEmployees
+};
 
 
 
