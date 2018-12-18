@@ -8,10 +8,10 @@
 				</div>
 				<div class="col-12 col-md-7 relative">
 					<video class="video" controls controlsList="nodownload">
-						  <source src="/video/promorosca.mp4" type="video/mp4">
-						  <source src="/video/promorosca.webm" type="video/webm">
-						  <source src="/video/promorosca.ogv" type="video/ogg">
-						</video>
+						<source src="/video/promorosca.mp4" type="video/mp4">
+						<source src="/video/promorosca.webm" type="video/webm">
+						<source src="/video/promorosca.ogv" type="video/ogg">
+					</video>
 					<div class="rectangle"></div>
 				</div>
 			</div>
@@ -48,7 +48,7 @@
 			</div>
 		</div>
 	</section>
-	<section class="consulta hidden">
+	<section class="consulta">
 		<div class="container">
 			<p class="h1 m-b-50">
 				Consulta si eres uno de <br>
@@ -65,8 +65,29 @@
 					</div>
 				</div>
 				<div class="col-12 col-sm-5 col-md-7 flex f-row justify-start align-center">
-					<button id="btnSearchEmployee" class="button m-t-0 m-l-40" type="button" name="button" onclick="consultaPorNumeroEmpleado();">Buscar</button>
-					<button class="button flat m-t-0 m-l-40" type="button" name="button">Ver todos</button>
+					<button class="button m-t-0 m-l-40" type="button" name="button" onclick="consultaPorNumeroEmpleado();">Buscar</button>
+					<button class="button flat m-t-0 m-l-40" type="button" name="button" onclick="obtenerEmpleados();">Ver todos</button>
+				</div>
+			</div>
+			<br>
+			<br>
+			<br>
+			<div class="row hidden" id="empleadosContent">
+				<div class="col-12 col-sm-12">
+					<table id="empleados" class="" style="width:100%">
+						<thead>
+							<tr>
+								<th data-field="noEmpleado">No. Empleado</th>
+								<th data-field="nombre">Nombre</th>
+								<th data-field="apellidos">Apellidos</th>
+								<th data-field="area">Area</th>
+								<th data-field="region">Region</th>
+							</tr>
+						</thead>
+						<tfoot>
+							
+						</tfoot>
+					</table>
 				</div>
 			</div>
 		</div>
@@ -90,7 +111,7 @@
 								</div>
 							</div>
 						</div>
-						<div class="col-6 col-md-4 card-padding ">
+						<div class="col-6 col-md-4">
 							<div class="card">
 								<div class="card-header">
 									<span>1</span>
@@ -126,7 +147,7 @@
 								</div>
 							</div>
 						</div>
-						<div class="col-6 col-md-4 card-padding ">
+						<div class="col-6 col-md-4">
 							<div class="card">
 								<div class="card-header">
 									<span>90</span>
@@ -187,7 +208,6 @@
 			</div>
 		</div>
 		<img src="/img/rosca-taza.png" srcset="/img/rosca-taza@2x.png 2x,
-										 img/rosca-taza@3x.png 3x"
-		 class="rosca-taza tablet-none">
+										 img/rosca-taza@3x.png 3x" class="rosca-taza tablet-none">
 	</section>
 </main>

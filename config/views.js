@@ -12,9 +12,6 @@ var exphbs = require('express-handlebars'),
     //This allows cookies to be sent and received.
     cookieParser = require('cookie-parser'),
 
-    //Module responsible for logging.
-    morgan = require('morgan'),
-
     /**
      For older browsers that don't properly support REST
      HTTP verbs, such as UPDATE and PUT , the methodOverride middleware
@@ -24,6 +21,8 @@ var exphbs = require('express-handlebars'),
 
     //This handles any errors that occur throughout the entire middleware process.
     errorHandler = require('errorhandler');
+
+    morgan = require('morgan');
 
 module.exports = function (app) {
 
@@ -58,6 +57,7 @@ module.exports = function (app) {
     var staticFilesPath = path.join(__dirname, '../views/assets');
     console.log('static files : ' + staticFilesPath);
     app.use(express.static(staticFilesPath));
+    app.use(morgan('short'));
 
     return app;
 };

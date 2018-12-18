@@ -9,7 +9,7 @@ module.exports = function (app) {
             delete req.body.id;
             next();
         })
-        .get(authenticate, (req, res) => {
+        .get((req, res) => {
             // "/empleado": List Empleado
             empleados.list(req, res);
         })
