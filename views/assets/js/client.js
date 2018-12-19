@@ -1,6 +1,6 @@
 
 function consultaPorNumeroEmpleado() {
-    $('#empleadosContent').addClass('hidden');
+    $('#premiadosContent').addClass('hidden');
     let noEmpleado = $('#search').val();
 
     $.ajax({
@@ -29,7 +29,7 @@ function obtenerEmpleadosPremiados() {
 
     $('#resultMessageError').addClass('hidden');
     $('#resultSeachMessage').addClass('hidden');
-    $('#empleados').DataTable().destroy();
+    $('#premiados').DataTable().destroy();
 
     $.ajax({
         url: "http://localhost:3000/premiados"

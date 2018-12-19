@@ -1,0 +1,51 @@
+<section class="premios relative">
+    <div class="container">
+        <div class="row">
+            <div class="col-2 tablet-none"></div>
+            <div class="col-12 col-md-10">
+                <p class="h1">Seleccionados</p>
+                <div class="row" id="seleccionados">
+
+                </div>
+            </div>
+        </div>
+    </div>
+    <img src="/img/rosca.png" srcset="/img/rosca@2x.png 2x,
+										 img/rosca@3x.png 3x" class="rosca tablet-none">
+</section>
+<section class="consulta">
+    <div class="container">
+        <br>
+
+        <div class="row">
+            <div class="col-12 col-xs-12">
+                <table id="empleadosAdmin" class="" style="width:100%">
+                    <thead>
+                    <tr>
+                        <th data-field="noEmpleado">No.</th>
+                        <th data-field="nombre">Nombre</th>
+                        <th data-field="apellidos">Apellidos</th>
+                        <th data-field="area">Area</th>
+                        <th data-field="region">Region</th>
+                        <th data-field="seleccionado">Seleccionado</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    {{#each empleados}}
+                        <tr>
+                            <td>{{this.noEmpleado}}</td>
+                            <td>{{this.nombre}}</td>
+                            <td>{{this.apellidos}}</td>
+                            <td>{{this.area}}</td>
+                            <td>{{this.region.nombre}}</td>
+                            <td><input type="checkbox" {{#if this.seleccionado}} checked{{/if}} onclick="cambiarEstatusEmpleado({{this.noEmpleado}}, {{this.seleccionado}});"></td>
+                        </tr>
+                    {{/each}}
+                    </tbody>
+                    <tfoot>
+                    </tfoot>
+                </table>
+            </div>
+        </div>
+    </div>
+</section>
