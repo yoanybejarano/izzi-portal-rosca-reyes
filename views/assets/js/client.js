@@ -25,30 +25,30 @@ function consultaPorNumeroEmpleado() {
     });
 }
 
-function obtenerEmpleados() {
+function obtenerEmpleadosPremiados() {
 
     $('#resultMessageError').addClass('hidden');
     $('#resultSeachMessage').addClass('hidden');
     $('#empleados').DataTable().destroy();
 
     $.ajax({
-        url: "http://localhost:3000/empleado"
+        url: "http://localhost:3000/premiados"
     }).then(function (data) {
-        var tbody = document.createElement("tbody");
         if (!data.message) {
 
             var dataSet = [];
-            $.each(data.empleados, function (index, item) {
+            $.each(data.premiados, function (index, item) {
                 var itemValues = [];
                 itemValues.push(item.noEmpleado);
                 itemValues.push(item.nombre);
                 itemValues.push(item.apellidos);
                 itemValues.push(item.area);
                 itemValues.push(item.region.nombre);
+                itemValues.push(item.premio);
                 dataSet.push(itemValues);
             });
 
-            $('#empleados').DataTable({
+            $('#premiados').DataTable({
                 "language": {
                     "lengthMenu": "Mostrar _MENU_ resultados por pagina",
                     "zeroRecords": "No se encontraron resultados",
@@ -70,5 +70,5 @@ function obtenerEmpleados() {
 
         }
     });
-    $('#empleadosContent').removeClass('hidden');
+    $('#premiadosContent').removeClass('hidden');
 }
