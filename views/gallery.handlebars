@@ -11,7 +11,7 @@
                         <div class="floating-input">
                             <select id="region" name="region" class="selectWrapper">
                                 {{#each regiones}}
-                                    <option value="{{this.id}}">{{this.nombre}}</option>
+                                <option value="{{this.id}}">{{this.nombre}}</option>
                                 {{/each}}
                             </select>
                         </div>
@@ -21,7 +21,7 @@
                         <div class="floating-input">
                             <select id="empleado" name="empleado" class="selectWrapper">
                                 {{#each empleados}}
-                                    <option value="{{this.id}}">{{this.nombre}} {{this.apellidos}}</option>
+                                <option value="{{this.id}}">{{this.nombre}} {{this.apellidos}}</option>
                                 {{/each}}
                             </select>
                         </div>
@@ -29,7 +29,7 @@
                         <br>
                         <br>
                         <div class="floating-input">
-                            <label><input type="file" id="photo" name="photo" class="custom-file-input"/></label>
+                            <label><input type="file" id="photo" name="photo" class="custom-file-input" /></label>
                         </div>
 
                         <div class="button-section">
@@ -41,8 +41,11 @@
             </div>
         </div>
     </div>
-</section>
 
+
+    
+</section>
+<link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.0.13/css/all.css" integrity="sha384-DNOHZ68U8hZfKXOrtjWvjxusGo9WQnrNx2sqG0tfsghAvtVlRW3tvkXWZh58N9jp" crossorigin="anonymous">
 <style>
     .selectWrapper {
         width: 100%;
@@ -69,5 +72,5 @@
         text-indent: 0.01px;
         text-overflow: ellipsis;
     }
-
+    
 </style>

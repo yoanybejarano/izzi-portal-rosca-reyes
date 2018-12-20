@@ -1,7 +1,8 @@
 const mongoose = require('mongoose');
 const Schema = mongoose.Schema;
 const { ObjectID } = require('mongodb');
-const _ = require('lodash');
+const path = require('path');
+const fs = require('fs');
 
 const FotoSchema = new mongoose.Schema({
     _id: {
@@ -55,7 +56,7 @@ findById = (req, res) => {
 };
 
 datosFotos = () => {
-    return fotos.find({}, (err, fotos) => {
+    return Foto.find({}, (err, fotos) => {
         if (err) {
             return Promise.reject({
                 message: 'Error consultando las fotos.',
@@ -76,9 +77,40 @@ salvarFoto = (req, res) => {
     foto.save();
 };
 
+listaArchivos = async (region) => {
+    let viewData = [];
+    let fotos;
+    if (region) {
+        fotos = await datosFotos().filter((item) => {
+            item.region.name === region;
+        });
+    } else {
+        fotos = await datosFotos();
+    }
+
+    var appRootDir = path.dirname(require.main.filename);
+    const startPath = appRootDir + process.env.UPLOADS_FOLDER;
+
+    if (!fs.existsSync(startPath)) {
+        console.log("No existe el directorio ", startPath);
+        return;
+    }
+
+    const archivosFotos = fs.readdirSync(startPath);
+    archivosFotos.forEach((element, index) => {
+        const datosFoto = fotos.filter((item) => { return item.archivo === element });
+        const viewArchivo = {
+            "datosArchivo": datosFoto,
+            "archivoDir": startPath + '/' + file
+        };
+        viewData.push(viewArchivo);
+    });
+};
+
 module.exports = {
     list,
     findById,
     datosFotos,
-    salvarFoto
+    salvarFoto,
+    listaArchivos
 };

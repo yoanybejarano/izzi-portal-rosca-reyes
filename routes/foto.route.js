@@ -14,6 +14,7 @@ module.exports = function (app) {
         .get(async (req, res) => {
             const datosRegiones = await regiones.datosRegiones();
             const datosEmpleados = await empleados.datosEmpleados();
+            const datosArchivos = await fotos.listaArchivos();
             res.render('gallery', {regiones: datosRegiones, empleados: datosEmpleados});
         });
 
