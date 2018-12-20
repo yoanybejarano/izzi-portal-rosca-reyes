@@ -83,3 +83,6 @@ typings/
 
 #vscode generated folder
 .vscode/
+
+#upload folder content
+uploads/*

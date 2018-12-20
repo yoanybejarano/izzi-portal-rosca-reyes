@@ -47,7 +47,34 @@ findById = (req, res) => {
     }
 };
 
+datosRegiones = () => {
+    return Region.find({}, (err, regiones) => {
+        if (err) {
+            return Promise.reject({
+                message: 'Error consultando las regiones.',
+                error: err
+            });
+        }
+        return regiones;
+    });
+};
+
+datosRegionById = (id) => {
+    return Region.findOne({_id: id}, (err, region) => {
+        if (err) {
+            return Promise.reject({
+                message: 'Error consultando la region con id ' + id ,
+                error: err
+            });
+        }
+        return region;
+    });
+};
+
+
 module.exports = {
     list,
-    findById
+    findById,
+    datosRegiones,
+    datosRegionById
 };
