@@ -258,7 +258,11 @@ cambiarEmpleadoStatus = (req, res) => {
 }
 
 datosEmpleados = (region) => {
-    return Empleado.find({}, (err, empleados) => {
+    const filter = {};
+    if (region) {
+        filter = region;
+    }
+    return Empleado.find(filter, (err, empleados) => {
         if (err) {
             return Promise.reject({
                 message: 'Error consultando los empleados.',

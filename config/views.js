@@ -54,7 +54,7 @@ module.exports = function (app) {
     console.log('views : ' + viewsPath);
     app.set('views', viewsPath);
 
-    var staticFilesPath = path.join(__dirname, '../views/assets');
+    var staticFilesPath = path.join(__dirname, '../views');
     console.log('static files : ' + staticFilesPath);
     app.use(express.static(staticFilesPath));
     app.use(morgan('short'));
