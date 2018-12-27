@@ -1,5 +1,7 @@
 let empleados = require('../models/empleado.model');
-let {authenticate} = require('../middleware/authenticate');
+let roles = require('../models/rol.model');
+let premios = require('../models/premio.model');
+let { authenticate } = require('../middleware/authenticate');
 
 module.exports = function (app) {
     app.route("/empleado")
@@ -34,9 +36,10 @@ module.exports = function (app) {
             delete req.body.id;
             next();
         })
-        .post((req, res) => {
+        .post((req, res, next) => {
             // "/empleado/1": Find a empleado
-            empleados.login(req, res);
+
+            empleados.login(req, res, next);
         });
 
     app.route("/logout")
@@ -56,7 +59,7 @@ module.exports = function (app) {
             delete req.body.id;
             next();
         })
-        .get((req, res) => {
+        .get(async (req, res) => {
             // "/empleado": List Empleado
             empleados.listSelectedEmployees(req, res);
         });
@@ -73,18 +76,18 @@ module.exports = function (app) {
         });
 
     app.route("/admin")
-        .all((req, res, next) => {
+        .all(authenticate, (req, res, next) => {
             // Middleware for preexecution of routes\
             delete req.body.id;
             next();
         })
-        .get(async (req, res) => {
+        .get(async (req, res, next) => {
             // "/empleado": List Empleado
             let datos = await empleados.datosEmpleados();
-            res.render('admin', {empleados: datos});
+            res.render('admin', { empleados: datos });
         });
 
-    app.route("/cambio_estatus/:noEmpleado/:seleccionado")
+    app.route("/cambio_estatus")
         .all((req, res, next) => {
             // Middleware for preexecution of routes\
             delete req.body.id;
@@ -93,6 +96,45 @@ module.exports = function (app) {
         .post(async (req, res) => {
             // "/empleado": List Empleado
             empleados.cambiarEmpleadoStatus(req, res);
+        });
+
+    app.route("/empleado/region/:idRegion")
+        .all((req, res, next) => {
+            // Middleware for preexecution of routes
+            delete req.body.id;
+            next();
+        })
+        .get((req, res) => {
+            // "/empleado/1": Find a empleado
+            empleados.findByRegion(req, res);
+        });
+
+    app.route("/empleado/cambiarRol")
+        .all((req, res, next) => {
+            // Middleware for preexecution of routes
+            delete req.body.id;
+            next();
+        })
+        .post(async (req, res) => {
+            // "/empleado/1": Find a empleado
+            const rol = await roles.datosRolByNombre('Encargado');
+            req.rol = rol;
+            empleados.cambiarRol(req, res);
+        });
+
+    app.route("/empleado/:id/premio/:idPremio")
+        .all((req, res, next) => {
+            // Middleware for preexecution of routes\
+            delete req.body.id;
+            next();
+        })
+        .post(async (req, res) => {
+            // "/premios": List premios
+            const premio = await premios.datosPremioById(req.params.idPremio);
+            const empleado = await empleados.asignarPremio(req.params.id, premio);
+            if (empleado.premio) {
+                premios.decrementarDisponibilidad(req, res);
+            }
         });
 
 };

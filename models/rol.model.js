@@ -1,6 +1,6 @@
 const mongoose = require('mongoose');
 const Schema = mongoose.Schema;
-const {ObjectID} = require('mongodb');
+const { ObjectID } = require('mongodb');
 
 const rolSchema = new mongoose.Schema({
     nombre: {
@@ -13,7 +13,7 @@ const rolSchema = new mongoose.Schema({
         type: Schema.Types.ObjectId,
         ref: '{ref}'
     }
-}, {collection: 'roles'});
+}, { collection: 'roles' });
 let Rol = mongoose.model('Rol', rolSchema);
 
 
@@ -25,28 +25,42 @@ list = (req, res) => {
                 error: err
             });
         }
-        return res.status(200).send({'roles': roles});
+        return res.status(200).send({ 'roles': roles });
     });
 };
 
 findById = (req, res) => {
     if (ObjectID.isValid(req.params.id)) {
-        Rol.findOne({_id: req.params.id}, (err, rol) => {
+        Rol.findOne({ _id: req.params.id }, (err, rol) => {
             if (err) {
                 return res.status(500).json({
                     message: 'Error consultando el rol ' + req.params.id,
                     error: err
                 });
             }
-            if (!rol) return res.status(404).send({message: 'Rol no encontrado.'});
-            return res.status(200).send({'rol': rol});
+            if (!rol) return res.status(404).send({ message: 'Rol no encontrado.' });
+            return res.status(200).send({ 'rol': rol });
         });
     } else {
-        return res.status(500).send({message: 'Identificador de rol no valido.'});
+        return res.status(500).send({ message: 'Identificador de rol no valido.' });
     }
+};
+
+
+datosRolByNombre = (nombre) => {
+    return Rol.findOne({ nombre }, (err, rol) => {
+        if (err) {
+            return Promise.reject({
+                message: 'Error consultando el rol con el nombre ' + nombre,
+                error: err
+            });
+        }
+        return rol;
+    });
 };
 
 module.exports = {
     list,
-    findById
+    findById,
+    datosRolByNombre
 };

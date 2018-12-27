@@ -14,8 +14,18 @@ module.exports = function (app) {
         .get(async (req, res) => {
             const datosRegiones = await regiones.datosRegiones();
             const datosEmpleados = await empleados.datosEmpleados();
-            const datosArchivos = await fotos.listaArchivos();
-            res.render('gallery', {regiones: datosRegiones, empleados: datosEmpleados});
+            const datosArchivos = await fotos.listaDatosArchivos();
+            res.render('gallery', { regiones: datosRegiones, empleados: datosEmpleados, archivos: datosArchivos });
+        });
+
+    app.route("/galeria/:id")
+        .all((req, res, next) => {
+            // Middleware for preexecution of routes\
+            delete req.body.id;
+            next();
+        })
+        .get(async (req, res) => {
+            const datosArchivos = await fotos.listaArchivos(req, res);
         });
 
     app.route("/upload")
@@ -25,12 +35,12 @@ module.exports = function (app) {
             next();
         })
         .post(multer(multerConfig).single('photo'), async (req, res) => {
-            const regionObject = await regiones.datosRegionById(req.body.region);
+            const regionObject = await regiones.datosRegionById(req.body.filtroRegiones);
             req.body.regionObject = regionObject;
             fotos.salvarFoto(req, res);
             //Here is where I could add functions to then get the url of the new photo
             //And relocate that to a cloud storage solution with a callback containing its new url
             //then ideally loading that into your database solution.   Use case - user uploading an avatar...
-            res.send('Complete! Check out your uploads folder.  Please note that files not encoded with an image mimetype are rejected. <a href="/galeria">try again</a>');
+            res.status(302).redirect('/galeria');
         });
 };

@@ -68,43 +68,88 @@ datosFotos = () => {
 };
 
 salvarFoto = (req, res) => {
-    const empleado = req.body.empleado;
+    const empleado = req.body.filtroEmpleados ? ObjectID(req.body.filtroEmpleados) : null;
     const archivo = req.file.originalname;
-    console.log(req.body.region);
-    const region = { "_id": req.body.region, "nombre": req.body.regionObject.nombre };
+    console.log(req.body.filtroRegiones);
+    const region = { "_id": req.body.filtroRegiones, "nombre": req.body.regionObject.nombre };
     let foto = new Foto({ archivo, empleado, region });
     foto._id = new ObjectID();
     foto.save();
 };
 
-listaArchivos = async (region) => {
+listaDatosArchivos = async (region) => {
     let viewData = [];
     let fotos;
     if (region) {
         fotos = await datosFotos().filter((item) => {
-            item.region.name === region;
+            item.region === region;
         });
     } else {
         fotos = await datosFotos();
     }
 
     var appRootDir = path.dirname(require.main.filename);
-    const startPath = appRootDir + process.env.UPLOADS_FOLDER;
-
+    const startPath = appRootDir + '/views/' + process.env.UPLOADS_FOLDER;
+    // const startPath = appRootDir + '/' + process.env.UPLOADS_FOLDER;
     if (!fs.existsSync(startPath)) {
         console.log("No existe el directorio ", startPath);
         return;
     }
 
     const archivosFotos = fs.readdirSync(startPath);
-    archivosFotos.forEach((element, index) => {
-        const datosFoto = fotos.filter((item) => { return item.archivo === element });
-        const viewArchivo = {
-            "datosArchivo": datosFoto,
-            "archivoDir": startPath + '/' + file
-        };
-        viewData.push(viewArchivo);
-    });
+    if (archivosFotos.length > 0 && fotos.length > 0) {
+        archivosFotos.forEach((element, index) => {
+            const datosFoto = fotos.filter((item) => { return item.archivo === element });
+            const viewArchivo = {
+                "datosArchivo": datosFoto[0],
+                "archivoDir": process.env.UPLOADS_FOLDER + '/' + datosFoto[0].archivo
+            };
+            viewData.push(viewArchivo);
+        });
+    }
+    return viewData;
+};
+
+listaArchivos = async (req, res) => {
+    let viewData = [];
+    let fotos;
+    if (req.params.id) {
+        const id_region = req.params.id;
+        fotosList = await datosFotos();
+        fotos = fotosList.filter((item) => {
+            return item.region._id.toHexString() === id_region;
+        });
+    } else {
+        fotos = await datosFotos();
+    }
+
+    var appRootDir = path.dirname(require.main.filename);
+    const startPath = appRootDir + '/views/' + process.env.UPLOADS_FOLDER;
+    // const startPath = appRootDir + '/' + process.env.UPLOADS_FOLDER;
+    if (!fs.existsSync(startPath)) {
+        console.log("No existe el directorio ", startPath);
+        return;
+    }
+
+    const archivosFotos = fs.readdirSync(startPath);
+    if (archivosFotos.length && fotos) {
+        archivosFotos.forEach((element, index) => {
+            let datosFoto = [];
+            fotos.forEach((item, index) => {
+                if (item.archivo === element) {
+                    datosFoto.push(item);
+                }
+            });
+            if (datosFoto.length > 0) {
+                const viewArchivo = {
+                    "datosArchivo": datosFoto[0],
+                    "archivoDir": process.env.UPLOADS_FOLDER + '/' + datosFoto[0].archivo
+                };
+                viewData.push(viewArchivo);
+            }
+        });
+    }
+    return res.status(200).send({ archivos: viewData });
 };
 
 module.exports = {
@@ -112,5 +157,6 @@ module.exports = {
     findById,
     datosFotos,
     salvarFoto,
+    listaDatosArchivos,
     listaArchivos
 };
