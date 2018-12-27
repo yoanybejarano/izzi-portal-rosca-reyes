@@ -22,7 +22,7 @@ var exphbs = require('express-handlebars'),
     //This handles any errors that occur throughout the entire middleware process.
     errorHandler = require('errorhandler');
 
-    morgan = require('morgan');
+morgan = require('morgan');
 
 module.exports = function (app) {
 
@@ -32,29 +32,26 @@ module.exports = function (app) {
     app.use(methodOverride());
     app.use(cookieParser('some-secret-value-here'));
     routes(app);
-    
+
     if ('development' === app.get('env')) {
         app.use(errorHandler());
     }
 
     //Register Handlebars as default view rendering engine
-    app.engine('handlebars', exphbs.create({
+    app.engine('.hbs', exphbs.create({
         defaultLayout: 'main',
         layoutsDir: app.get('views') + '/layouts',
         partialsDir: [app.get('views') + '/partials'],
-        helpers: {
-            timeago: function (timestamp) {
-                return moment(timestamp).startOf('minute').fromNow();
-            }
-        }
+        helpers: require('../helpers/handlebars').helpers,
+        extname: '.hbs'
     }).engine);
-    app.set('view engine', 'handlebars');
+    app.set('view engine', '.hbs');
 
     var viewsPath = path.join(__dirname, '../views/');
     console.log('views : ' + viewsPath);
     app.set('views', viewsPath);
 
-    var staticFilesPath = path.join(__dirname, '../views');
+    var staticFilesPath = path.join(__dirname, '../views/');
     console.log('static files : ' + staticFilesPath);
     app.use(express.static(staticFilesPath));
     app.use(morgan('short'));

@@ -8,7 +8,7 @@ const logger = require('./config/logger');
 let app = express();
 app.use(bodyParser.json());
 
-const port = process.env.PORT || 3000;
+const port = process.env.PORT;
 app.listen(port, () => {
     console.log(`Rosca Reyes izzi - Port ${port}`);
 });
