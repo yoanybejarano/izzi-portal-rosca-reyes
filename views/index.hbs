@@ -46,7 +46,7 @@
         </div>
     </div>
 </section>
-<section class="consulta hidden">
+<section class="consulta">
     <div class="container">
         <p class="h1 m-b-50">
             Consulta si eres uno de <br>
@@ -66,8 +66,8 @@
                 <button class="button m-t-0 m-l-40" type="button" name="button" onclick="consultaPorNumeroEmpleado();">
                     Buscar
                 </button>
-                <button class="button flat m-t-0 m-l-40" type="button" name="button"
-                        onclick="obtenerEmpleadosPremiados();">Ver todos
+                <button class="button flat m-t-0 m-l-40" type="button" name="button" onclick="obtenerEmpleadosPremiados();">Ver
+                    todos
                 </button>
             </div>
         </div>
@@ -78,14 +78,14 @@
             <div class="col-12 col-sm-12">
                 <table id="premiados" class="" style="width:100%">
                     <thead>
-                    <tr>
-                        <th data-field="noEmpleado">No. Empleado</th>
-                        <th data-field="nombre">Nombre</th>
-                        <th data-field="apellidos">Apellidos</th>
-                        <th data-field="area">Area</th>
-                        <th data-field="region">Region</th>
-                        <th data-field="premio">Premio</th>
-                    </tr>
+                        <tr>
+                            <th data-field="noEmpleado">No. Empleado</th>
+                            <th data-field="nombre">Nombre</th>
+                            <th data-field="apellidos">Apellidos</th>
+                            <th data-field="area">Area</th>
+                            <th data-field="region">Region</th>
+                            <th data-field="premio">Premio</th>
+                        </tr>
                     </thead>
                     <tfoot>
 
@@ -173,13 +173,29 @@
                             </div>
                         </div>
                     </div>
+
+                    {{!-- {{#each premios}}
+                    <div class="col-6 col-md-4">
+                        <div class="card">
+                            <div class="card-header">
+                                <span>{{this.disponibles}}</span>
+                                <img src="/rosca/assets/img/{{this.icono}}" +>
+                            </div>
+                            <div class="card-content">
+                                {{this.nombre}}
+                            </div>
+                        </div>
+                    </div>
+                    {{/each}} --}}
+
                 </div>
             </div>
             <div class="col-2 tablet-none"></div>
         </div>
     </div>
     <img src="/rosca/assets/img/reyes.png" srcset="/rosca/assets/img/reyes@2x.png 2x,
-										 rosca/assets/img/reyes@3x.png 3x" class="rosca tablet-none">
+										 rosca/assets/img/reyes@3x.png 3x"
+        class="rosca tablet-none">
 </section>
 <div id="Dinamica"></div>
 <section class="mecanica relative">
@@ -214,5 +230,6 @@
         </div>
     </div>
     <img src="/rosca/assets/img/rosca.png" srcset="/rosca/assets/img/rosca@2x.png 2x,
-										 rosca/assets/img/rosca@3x.png 3x" class="rosca-taza tablet-none">
+										 rosca/assets/img/rosca@3x.png 3x"
+        class="rosca-taza tablet-none">
 </section>

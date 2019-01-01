@@ -10,6 +10,7 @@ const premioSchema = new mongoose.Schema({
         trim: true,
         unique: true
     },
+    icono: String,    
     disponibles: Number,
     _id: {
         type: Schema.Types.ObjectId,

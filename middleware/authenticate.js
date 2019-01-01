@@ -1,7 +1,7 @@
-var {Empleado} = require('../models/empleado.model');
+var { Empleado } = require('../models/empleado.model');
 
 var authenticate = (req, res, next) => {
-    var token = req.header('x-auth');
+    var token = req.get('x-auth');
 
     Empleado.findByToken(token).then((empleado) => {
         if (!empleado) return Promise.reject();
@@ -10,8 +10,8 @@ var authenticate = (req, res, next) => {
         req.token = token;
         next();
     }).catch((e) => {
-        res.status(401).send({message: 'Necesita autenticarse para acceder a este elemento'});
+        res.render('login', { layout: 'auth.hbs' });
     });
 };
 
-module.exports = {authenticate};
+module.exports = { authenticate };

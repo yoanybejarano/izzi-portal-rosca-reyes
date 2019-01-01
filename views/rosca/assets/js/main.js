@@ -32,5 +32,42 @@
 
   $(function() {
     scroll.init();
+	  
+	  $(".rosca-galeria .load-gallery").on('click',function(e){
+		$(this).parent().toggleClass("expanded");
+		$(this).closest("section").find(".gallery-grid .photo-element.hidden").removeClass("hidden");
+		$(this).parent().remove();
+		return false;
+		});
+	  
+	  $("#form_ganadores").validate({
+		highlight: function(element) {
+			$(element).closest('.ctrl-holder').removeClass('valid').addClass('error');
+			$(element).closest('.select-holder').removeClass('valid').addClass('error');
+		},
+		unhighlight: function(element) {
+			$(element).closest('.ctrl-holder').addClass('valid').removeClass('error');
+			$(element).closest('.select-holder').addClass('valid').removeClass('error');
+		},
+		rules: {
+			'ganadores_nombre': {
+				required: true
+			},
+			'ganadores_empleado': {
+				required: true,
+				number: true,
+				minlength: 8
+			},
+			'ganadores_localidad': {
+				required: true
+			}
+		},
+		messages: {
+
+		},
+		submitHandler: function(form, event) {
+			form.submit();
+		}
+	});
   });
 })(jQuery);

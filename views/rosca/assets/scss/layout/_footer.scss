@@ -5,6 +5,27 @@ footer {
     position: absolute;
     left: auto;
     right: 21%;
+	  &.regalos{
+		  width: 259px;
+		  left: 0;
+		  right: auto;
+		  bottom: 0;
+		  @media (max-width: 768px) {
+		  	left: 0% !important;
+			right: auto!important;
+		  }
+	  }
+	  &.taza{
+		  width: 400px;
+		  right: 0;
+		  left: auto;
+		  bottom: 0px;
+		  @media (max-width: 768px) {
+			width: 300px;
+		  	right: 0% !important;
+			  bottom: 120px;
+		  }
+	  }
 
     @media (max-width: 768px) {
       right: 10% !important;

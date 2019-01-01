@@ -15,7 +15,8 @@ module.exports = function (app) {
             const datosRegiones = await regiones.datosRegiones();
             const datosEmpleados = await empleados.datosEmpleados();
             const datosArchivos = await fotos.listaDatosArchivos();
-            res.render('gallery', { regiones: datosRegiones, empleados: datosEmpleados, archivos: datosArchivos });
+            // res.render('gallery', { regiones: datosRegiones, empleados: datosEmpleados, archivos: datosArchivos });
+            res.render('reyes', { regiones: datosRegiones, empleados: datosEmpleados, archivos: datosArchivos });
         });
 
     app.route("/galeria/:id")

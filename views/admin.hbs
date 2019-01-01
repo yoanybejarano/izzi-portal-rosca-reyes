@@ -1,17 +1,116 @@
-<section class="premios relative">
-    <div class="container">
-        <div class="row">
-            <div class="col-2 tablet-none"></div>
-            <div class="col-12 col-md-10">
-                <p class="h1">Seleccionados</p>
-                <div class="row" id="seleccionados">
-
-                </div>
-            </div>
+<div class="container mt-5 mb-5">
+    <div class="row">
+        <div class="col-12">
+            <h1>Administración</h1>
         </div>
     </div>
-    <img src="/rosca/assets/img/rosca.png" srcset="/rosca/assets/img/rosca@2x.png 2x, rosca/assets/img/rosca@3x.png 3x" class="rosca tablet-none">
+</div>
+<section class="consulta">
+    <div class="container">
+        <br>
+
+        <div class="row">
+            <div class="col-md-12">
+                <div class="col-12 col-md-9">
+                    <ul>
+                        <li>
+                            <p>
+                                Modificar Rol
+                            </p>
+                        </li>
+                    </ul>
+                </div>
+                <form role="form" action={{actionForm}} method="POST" id="formEstatus">
+                    <div class="container">
+                        <div class="row">
+                            <div class="col-md-4">
+                                <div class="select-holder">
+                                    <label for="filtroRegionesAdmin">Regiones</label>
+                                    <select id="filtroRegionesAdmin" name="filtroRegiones" class="form-control"
+                                            title="Regiones"
+                                            onchange="cargarEmpleadosPorRegion();">
+                                        <option>Seleccione</option>
+                                        {{#each regiones}}
+                                            <option value="{{this._id}}">{{this.nombre}}</option>
+                                        {{/each}}
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="select-holder">
+                                    <label for="filtroEmpleadosAdmin">Empleados</label>
+                                    <select id="filtroEmpleadosAdmin" name="filtroEmpleados" class="form-control"
+                                            title="Empleados"
+                                            onchange="seleccionarEmpleado();">
+                                        <option>Seleccione</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-sm-4">
+                                <button type="submit" class="button pink expand mt-0" onclick="event.preventDefault();cambioEstatus();">
+                                    Salvar cambios
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </form>
+
+            </div>
+            <div class="col-md-6"></div>
+        </div>
+        <br>
+        <div class="row">
+            <div class="col-md-12">
+                <div class="col-12 col-md-9">
+                    <ul>
+                        <li>
+                            <p>
+                                Asignar Premios
+                            </p>
+                        </li>
+                    </ul>
+                </div>
+                <form role="form" onsubmit="event.preventDefault();asignarPremio();" id="formAsignarPremio">
+                    <div class="container">
+                        <div class="row">
+                            <div class="col-md-4">
+                                <div class="select-holder">
+                                    <label for="empleadosSeleccionados">Empleados Seleccionados</label>
+                                    <select id="empleadosSeleccionados" name="empleadosSeleccionados" class="form-control"
+                                            title="Empleados">
+
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="select-holder">
+                                    <label for="premio">Premios</label>
+                                    <select id="premios" name="premios" class="form-control" title="Premios">
+
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-sm-4">
+                                <button type="submit" class="button pink expand mt-0">
+                                    Salvar cambios
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </form>
+
+            </div>
+            <div class="col-md-6"></div>
+        </div>
+
+    </div>
+
 </section>
+
 <section class="consulta">
     <div class="container">
         <br>
@@ -27,6 +126,7 @@
                         <th data-field="area">Area</th>
                         <th data-field="region">Region</th>
                         <th data-field="seleccionado">Seleccionado</th>
+                        <th data-field="rol">Rol</th>
                     </tr>
                     </thead>
                     <tbody>
@@ -37,7 +137,10 @@
                             <td>{{this.apellidos}}</td>
                             <td>{{this.area}}</td>
                             <td>{{this.region.nombre}}</td>
-                            <td><input type="checkbox" {{#if this.seleccionado}} checked{{/if}} onclick="cambiarEstatusEmpleado({{this.noEmpleado}}, {{this.seleccionado}});"></td>
+                            <td><input type="checkbox" {{#if this.seleccionado}}checked{{/if}}
+                                       onclick="cambiarEstatusEmpleado({{this.noEmpleado}}, {{this.seleccionado}});">
+                            </td>
+                            <td>{{this.rol.nombre}}</td>
                         </tr>
                     {{/each}}
                     </tbody>
@@ -46,5 +149,6 @@
                 </table>
             </div>
         </div>
+
     </div>
 </section>

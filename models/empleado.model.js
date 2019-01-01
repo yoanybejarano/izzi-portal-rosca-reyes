@@ -375,7 +375,7 @@ asignarPremio = function (id, premio) {
         }
         return empleado;
     });
-}
+};
 
 buscarRegionesConEncargados = function () {
     return Empleado.find({ "rol.nombre": "Encargado" }, (err, empleados) => {
@@ -387,7 +387,7 @@ buscarRegionesConEncargados = function () {
         }
         return empleados;
     });
-}
+};
 
 module.exports = {
     Empleado,
