@@ -89,7 +89,7 @@ function esFotoPerfil() {
 }
 
 function cargarImagenes() {
-    var region = $('#filtroRegiones').val();
+    var region = $('#ganadores_localidad').val();
 
     $.ajax({
         url: "http://localhost:3000/galeria/" + region
@@ -194,7 +194,7 @@ function asignarPremio() {
     }).then(function (data) {
         if (data.premio) {
             alert('Premio asignado correctamente.');
-            $('#formAsignarPremio').trigger("reset");
+            $('#formAsignarPremio').trigger("reset");dis
         }
     });
 }
@@ -221,16 +221,56 @@ function cambioEstatus() {
     }else {
         empleadoSeleccionado = $('#empleadoSeleccionado').val();
     }
+    var filtroRegiones = $('#filtroRegionesAdmin option:selected').val();
     var url = $("#formEstatus").attr('action');
     $.ajax({
         url: "http://localhost:3000" + url,
         method: 'POST',
-        data: { filtroEmpleados, empleadoSeleccionado }
+        data: { filtroEmpleados, empleadoSeleccionado, filtroRegiones }
     }).then(function (data) {
+        if (data.message) {
+            alert(data.message);
+        }
         if (data.empleado) {
             alert('Cambio exitoso. La tabla no se autorecarga, asi que refresca la pagina');
             $("#empleadosAdmin").load(location.href + " #empleadosAdmin>*", "");
             $('#formEstatus').trigger("reset");
+        }
+    });
+}
+
+function cargarNumeroEmpleado() {
+    var id = $('#filtroEmpleadosAdmin option:selected').val();
+    $.ajax({
+        url: "http://localhost:3000/empleado/datos/" + id
+    }).then(function (data) {
+        if (data.empleado) {
+            $("#ganadores").val(data.empleado.noEmpleado);
+        }
+    });
+}
+
+function cargarLimitesSeleccionados() {
+    var keyName = 'Seleccionados';
+    $.ajax({
+        url: "http://localhost:3000/limites/key/" + keyName
+    }).then(function (data) {
+        if (data.limite) {
+            $("#cantidad_seleccionados").val(data.limite.value);
+        }
+    });
+}
+
+function modificarLimitesSeleccionados() {
+    var nuevaCantidad = $('#cantidad_seleccionados').val();
+    $.ajax({
+        url: "http://localhost:3000/limites/modificar_seleccionados",
+        method: 'POST',
+        data: {cantidadLimite : nuevaCantidad}
+    }).then(function (data) {
+        if (data.nuevaCantidad) {
+            $("#cantidad_seleccionados").val(data.nuevaCantidad);
+            alert('Cantidad limite actualizada correectamente a ' + data.nuevaCantidad);
         }
     });
 }

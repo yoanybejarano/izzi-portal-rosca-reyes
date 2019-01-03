@@ -8,7 +8,39 @@
 <section class="consulta">
     <div class="container">
         <br>
-
+        <div class="row">
+            <div class="col-md-12">
+                <div class="col-12 col-md-9">
+                    <ul>
+                        <li>
+                            <p>
+                                Seleccionados por region
+                            </p>
+                        </li>
+                    </ul>
+                </div>
+                <form>
+                    <div class="container">
+                        <div class="row">
+                            <div class="col-md-4">
+                                <div class="ctrl-holder">
+                                    <label for="">Cantidad actual</label>
+                                    <input type="text" name="cantidad_seleccionados" id="cantidad_seleccionados"
+                                           required="">
+                                </div>
+                            </div>
+                            <div class="col-sm-4">
+                                <button type="submit" class="button pink expand mt-0" onclick="event.preventDefault();modificarLimitesSeleccionados();">
+                                    Modificar
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </form>
+            </div>
+            <div class="col-md-6"></div>
+        </div>
+        <br>
         <div class="row">
             <div class="col-md-12">
                 <div class="col-12 col-md-9">
@@ -46,17 +78,15 @@
                                     </select>
                                 </div>
                             </div>
-                        </div>
-                        <div class="row">
                             <div class="col-sm-4">
-                                <button type="submit" class="button pink expand mt-0" onclick="event.preventDefault();cambioEstatus();">
+                                <button type="submit" class="button pink expand mt-0"
+                                        onclick="event.preventDefault();cambioEstatus();">
                                     Salvar cambios
                                 </button>
                             </div>
                         </div>
                     </div>
                 </form>
-
             </div>
             <div class="col-md-6"></div>
         </div>
@@ -78,7 +108,8 @@
                             <div class="col-md-4">
                                 <div class="select-holder">
                                     <label for="empleadosSeleccionados">Empleados Seleccionados</label>
-                                    <select id="empleadosSeleccionados" name="empleadosSeleccionados" class="form-control"
+                                    <select id="empleadosSeleccionados" name="empleadosSeleccionados"
+                                            class="form-control"
                                             title="Empleados">
 
                                     </select>
@@ -92,8 +123,6 @@
                                     </select>
                                 </div>
                             </div>
-                        </div>
-                        <div class="row">
                             <div class="col-sm-4">
                                 <button type="submit" class="button pink expand mt-0">
                                     Salvar cambios
@@ -152,3 +181,12 @@
 
     </div>
 </section>
+
+{{#each scripts}}
+    <script src="{{script}}"></script>
+{{/each}}
+<script>
+    cargarEmpleadosSeleccionados();
+    cargarPremiosSinAsignar();
+    cargarLimitesSeleccionados();
+</script>

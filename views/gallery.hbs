@@ -1,45 +1,90 @@
-<section class="consulta">
-    <div class="container" style="margin-top:40px">
-        <p class="h1 m-b-50">
-            Galeria de eventos
-        </p>
-        <div class="row">
-            <div class="col-12 col-sm-7 col-md-5 flex f-col justify-end">
-
-                <form action="/upload" enctype="multipart/form-data" method="POST">
-                    <div>
-                        <div class="floating-input">
-                            <select id="region" name="region" class="selectWrapper">
-                                {{#each regiones}}
-                                    <option value="{{this.id}}">{{this.nombre}}</option>
-                                {{/each}}
-                            </select>
-                        </div>
-
-                        <br>
-                        <br>
-                        <div class="floating-input">
-                            <select id="empleado" name="empleado" class="selectWrapper">
-                                {{#each empleados}}
-                                    <option value="{{this.id}}">{{this.nombre}} {{this.apellidos}}</option>
-                                {{/each}}
-                            </select>
-                        </div>
-
-                        <br>
-                        <br>
-                        <div class="floating-input">
-                            <label><input type="file" id="photo" name="photo" class="custom-file-input"/></label>
-                        </div>
-
-                        <div class="button-section">
-                            <button type="submit" class="button pink">Subir Foto</button>
-                        </div>
-                    </div>
-                </form>
-
-            </div>
+<div class="container mt-5 mb-5">
+    <div class="row">
+        <div class="col-6">
+            <h1>Reyes Magos</h1>
+        </div>
+        <div class="col-6">
+            <a href="/admin" class="button pink expand mt-0">Administración</a>
         </div>
     </div>
+</div>
+<section class="form-ganadores">
+    <form action="/upload" id="form_ganadores" novalidate="novalidate" enctype="multipart/form-data" method="POST">
+        <div class="container">
+            <div class="row">
+                <div class="col-sm-12">
+                    <h2 class="mb-5">Hola Rey Mago aquí podrás ingresar a tus ganadores</h2>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md-4">
+                    <div class="select-holder">
+                        <label for="filtroEmpleadosAdmin">Nombre</label>
+                        <select name="filtroEmpleadosAdmin" id="filtroEmpleadosAdmin"
+                                onchange="cargarNumeroEmpleado();">
+                            <option value="">Selecciona tu nombre</option>
+                            {{#each empleados}}
+                                <option value="{{this.id}}">{{this.nombre}} {{this.apellidos}}</option>
+                            {{/each}}
+                        </select>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="ctrl-holder">
+                        <label for="ganadores_empleado">Número de empleado</label>
+                        <input type="text" name="ganadores" id="ganadores" disabled>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="select-holder">
+                        <label for="filtroRegiones">Localidad</label>
+                        <select name="filtroRegiones" id="filtroRegiones" required="">
+                            <option value="">Selecciona tu localidad</option>
+                            {{#each regiones}}
+                                <option value="{{this.id}}">{{this.nombre}}</option>
+                            {{/each}}
+                        </select>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="ctrl-holder">
+                        <label for="photo">Foto</label>
+                        <input type="file" name="photo" id="photo" required="">
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-sm-4">
+                    <button class="button pink expand mt-0" type="submit">Subir foto</button>
+                </div>
+            </div>
+        </div>
+    </form>
+</section>
+<section class="rosca-galeria">
+    <div class="container">
+        <div class="row">
+            <div class="col-sm-8">
+                <div class="h1 mb-5">Reyes Magos</div>
+            </div>
+            <div class="col-sm-4 sm-text-right">
+                <p class="mt-2 mb-5">
+                    <a href="/slider" target="_blank">Ver todas las fotos</a>
+                    <!--<a href="#" class="load-gallery">Ver todas las fotos</a>-->
+                </p>
+            </div>
+        </div>
+        <div class="gallery-grid">
 
+            {{#each archivos as |file index|}}
+                <div class="photo-element {{#bigger index 8}}hidden{{/bigger}}">
+                    <a href="{{file.archivoDir}}" target="_blank">
+                        <img src={{file.archivoDir}} alt="{{index}}">
+                    </a>
+                    <span class="info">{{file.datosArchivo.region.nombre}}</span>
+                </div>
+            {{/each}}
+
+        </div>
+    </div>
 </section>

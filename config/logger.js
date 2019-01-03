@@ -10,7 +10,8 @@ morganOptions = {
             url.includes('/css') ||
             url.includes('/img') ||
             url.includes('/video') ||
-            url.includes('/scss');
+            url.includes('/scss') ||
+            url.includes('/uploads');
         return assets;
     }
 };

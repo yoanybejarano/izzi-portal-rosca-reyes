@@ -1,8 +1,11 @@
 const mongoose = require('mongoose');
 const Schema = mongoose.Schema;
-const { ObjectID } = require('mongodb');
+const {ObjectID} = require('mongodb');
 const path = require('path');
 const fs = require('fs');
+const appRootDir = path.dirname(require.main.filename);
+const startPath = appRootDir + '/views/' + process.env.UPLOADS_FOLDER;
+
 
 const FotoSchema = new mongoose.Schema({
     _id: {
@@ -21,7 +24,7 @@ const FotoSchema = new mongoose.Schema({
             ref: 'regiones'
         }
     }
-}, { collection: 'fotos' });
+}, {collection: 'fotos'});
 
 let Foto = mongoose.model('fotos', FotoSchema);
 
@@ -34,24 +37,24 @@ list = (req, res) => {
                 error: err
             });
         }
-        return res.status(200).send({ 'fotos': fotos });
+        return res.status(200).send({'fotos': fotos});
     });
 };
 
 findById = (req, res) => {
     if (ObjectID.isValid(req.params.id)) {
-        Foto.findOne({ _id: req.params.id }, (err, foto) => {
+        Foto.findOne({_id: req.params.id}, (err, foto) => {
             if (err) {
                 return res.status(500).json({
                     message: 'Error consultando la foto ' + req.params.id,
                     error: err
                 });
             }
-            if (!fotos) return res.status(404).send({ message: 'Foto no encontrada.' });
-            return res.status(200).send({ 'foto': foto });
+            if (!fotos) return res.status(404).send({message: 'Foto no encontrada.'});
+            return res.status(200).send({'foto': foto});
         });
     } else {
-        return res.status(500).send({ message: 'Identificador de foto no valido.' });
+        return res.status(500).send({message: 'Identificador de foto no valido.'});
     }
 };
 
@@ -68,11 +71,11 @@ datosFotos = () => {
 };
 
 salvarFoto = (req, res) => {
-    const empleado = req.body.filtroEmpleados ? ObjectID(req.body.filtroEmpleados) : null;
+    const empleado = req.body.filtroEmpleadosAdmin ? ObjectID(req.body.filtroEmpleadosAdmin) : null;
     const archivo = req.file.originalname;
     console.log(req.body.filtroRegiones);
-    const region = { "_id": req.body.filtroRegiones, "nombre": req.body.regionObject.nombre };
-    let foto = new Foto({ archivo, empleado, region });
+    const region = {"_id": req.body.filtroRegiones, "nombre": req.body.regionObject.nombre};
+    let foto = new Foto({archivo, empleado, region});
     foto._id = new ObjectID();
     foto.save();
 };
@@ -88,9 +91,6 @@ listaDatosArchivos = async (region) => {
         fotos = await datosFotos();
     }
 
-    var appRootDir = path.dirname(require.main.filename);
-    const startPath = appRootDir + '/views/' + process.env.UPLOADS_FOLDER;
-    // const startPath = appRootDir + '/' + process.env.UPLOADS_FOLDER;
     if (!fs.existsSync(startPath)) {
         console.log("No existe el directorio ", startPath);
         return;
@@ -99,7 +99,9 @@ listaDatosArchivos = async (region) => {
     const archivosFotos = fs.readdirSync(startPath);
     if (archivosFotos.length > 0 && fotos.length > 0) {
         archivosFotos.forEach((element, index) => {
-            const datosFoto = fotos.filter((item) => { return item.archivo === element });
+            const datosFoto = fotos.filter((item) => {
+                return item.archivo === element
+            });
             const viewArchivo = {
                 "datosArchivo": datosFoto[0],
                 "archivoDir": process.env.UPLOADS_FOLDER + '/' + datosFoto[0].archivo
@@ -107,7 +109,7 @@ listaDatosArchivos = async (region) => {
             viewData.push(viewArchivo);
         });
     }
-    return viewData;
+    return viewData.slice(viewData.length - 8, viewData.length).reverse();
 };
 
 listaArchivos = async (req, res) => {
@@ -123,9 +125,6 @@ listaArchivos = async (req, res) => {
         fotos = await datosFotos();
     }
 
-    var appRootDir = path.dirname(require.main.filename);
-    const startPath = appRootDir + '/views/' + process.env.UPLOADS_FOLDER;
-    // const startPath = appRootDir + '/' + process.env.UPLOADS_FOLDER;
     if (!fs.existsSync(startPath)) {
         console.log("No existe el directorio ", startPath);
         return;
@@ -149,7 +148,7 @@ listaArchivos = async (req, res) => {
             }
         });
     }
-    return res.status(200).send({ archivos: viewData });
+    return res.status(200).send({archivos: viewData});
 };
 
 module.exports = {

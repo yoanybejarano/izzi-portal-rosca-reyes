@@ -1,7 +1,8 @@
 let empleados = require('../models/empleado.model');
 let roles = require('../models/rol.model');
 let premios = require('../models/premio.model');
-let { authenticate } = require('../middleware/authenticate');
+let {authenticate} = require('../middleware/authenticate');
+let limites = require('../models/limites.model');
 
 module.exports = function (app) {
     app.route("/empleado")
@@ -28,6 +29,17 @@ module.exports = function (app) {
         .get((req, res) => {
             // "/empleado/1": Find a empleado
             empleados.findByNoEmpleado(req, res);
+        });
+
+    app.route("/empleado/datos/:id")
+        .all((req, res, next) => {
+            // Middleware for preexecution of routes
+            delete req.body.id;
+            next();
+        })
+        .get((req, res) => {
+            // "/empleado/1": Find a empleado
+            empleados.findById(req, res);
         });
 
     app.route("/login")
@@ -84,7 +96,7 @@ module.exports = function (app) {
         .get(async (req, res, next) => {
             // "/empleado": List Empleado
             let datos = await empleados.datosEmpleados();
-            res.render('admin', { empleados: datos });
+            res.render('admin', {empleados: datos});
         });
 
     app.route("/cambio_estatus")
@@ -95,7 +107,13 @@ module.exports = function (app) {
         })
         .post(async (req, res) => {
             // "/empleado": List Empleado
-            empleados.cambiarEmpleadoStatus(req, res);
+            const seleccionadosPermitidos = await limites.datosLimiteByNombre('Seleccionados');
+            const cantSeleccionados = await empleados.countSelectedEmployeesByRegion(req.body.filtroRegiones);
+            const permitidos = seleccionadosPermitidos.value;
+            if (cantSeleccionados < permitidos) {
+                empleados.cambiarEmpleadoStatus(req, res);
+            }
+            return res.status(200).send({'message': 'La cantidad de empleados seleccionados en esta region estan ocupados'});
         });
 
     app.route("/empleado/region/:idRegion")

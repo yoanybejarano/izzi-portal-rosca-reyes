@@ -4,12 +4,12 @@
             <h1>Reyes Magos</h1>
         </div>
         <div class="col-6">
-            <a href="/admin" class="button pink expand mt-0">Administracion</a>
+            <a href="/admin" class="button pink expand mt-0">Administración</a>
         </div>
     </div>
 </div>
 <section class="form-ganadores">
-    <form action="" id="form_ganadores" novalidate="novalidate">
+    <form action="/upload" id="form_ganadores" novalidate="novalidate" enctype="multipart/form-data" method="POST">
         <div class="container">
             <div class="row">
                 <div class="col-sm-12">
@@ -18,32 +18,45 @@
             </div>
             <div class="row">
                 <div class="col-md-4">
-                    <div class="ctrl-holder">
-                        <label for="ganadores_nombre">Nombre</label>
-                        <input type="text" name="ganadores_nombre" id="ganadores_nombre" required="">
+                    <div class="select-holder">
+                        <label for="filtroEmpleadosAdmin">Nombre</label>
+                        <!--<input type="text" name="ganadores_nombre" id="ganadores_nombre" required="">-->
+                        <select name="filtroEmpleadosAdmin" id="filtroEmpleadosAdmin"
+                                onchange="cargarNumeroEmpleado();">
+                            <option value="">Selecciona tu nombre</option>
+                            {{#each empleados}}
+                                <option value="{{this.id}}">{{this.nombre}} {{this.apellidos}}</option>
+                            {{/each}}
+                        </select>
                     </div>
                 </div>
                 <div class="col-md-4">
                     <div class="ctrl-holder">
                         <label for="ganadores_empleado">Número de empleado</label>
-                        <input type="text" name="ganadores_empleado" id="ganadores_empleado" required="">
+                        <input type="text" name="ganadores" id="ganadores" disabled>
                     </div>
                 </div>
                 <div class="col-md-4">
                     <div class="select-holder">
-                        <label for="ganadores_localidad">Localidad</label>
-                        <select name="ganadores_localidad" id="ganadores_localidad" required="">
+                        <label for="filtroRegiones">Localidad</label>
+                        <select name="filtroRegiones" id="filtroRegiones" required="">
                             <option value="">Selecciona tu localidad</option>
-                            <option value="GDL">Guadalajara, Jal.</option>
-                            <option value="CDMX">Ciudad de México</option>
-                            <option value="MTY">Monterrey, N.L.</option>
+                            {{#each regiones}}
+                                <option value="{{this.id}}">{{this.nombre}}</option>
+                            {{/each}}
                         </select>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="ctrl-holder">
+                        <label for="photo">Foto</label>
+                        <input type="file" name="photo" id="photo" required="">
                     </div>
                 </div>
             </div>
             <div class="row">
                 <div class="col-sm-4">
-                    <button class="button pink expand mt-0" type="submit">Registrar</button>
+                    <button class="button pink expand mt-0" type="submit">Subir foto</button>
                 </div>
             </div>
         </div>
@@ -56,66 +69,23 @@
                 <div class="h1 mb-5">Reyes Magos</div>
             </div>
             <div class="col-sm-4 sm-text-right">
-                <p class="mt-2 mb-5"><a href="/slider" target="_blank">Ver todas las fotos</a></p>
+                <p class="mt-2 mb-5">
+                    <!--<a href="/slider" target="_blank">Ver todas las fotos</a>-->
+                    <a href="#" class="load-gallery">Ver todas las fotos</a>
+                </p>
             </div>
         </div>
         <div class="gallery-grid">
 
-            {{#each archivos}}
-                <div class="photo-element">
-                    <img src={{archivoDir}} alt="">
-                    <span class="info">{{datosArchivo.archivo}}</span>
+            {{#each archivos as |file index|}}
+                <div class="photo-element {{#bigger index 8}}hidden{{/bigger}}">
+                    <a href="{{file.archivoDir}}" target="_blank">
+                        <img src={{file.archivoDir}} alt="{{index}}">
+                    </a>
+                    <span class="info">{{file.datosArchivo.region.nombre}}</span>
                 </div>
             {{/each}}
 
-            <!--<div class="photo-element">-->
-                <!--<img src="/rosca/assets/img/rosca-1.jpg" alt="">-->
-                <!--<span class="info">02/01/19 - CDMX</span>-->
-            <!--</div>-->
-            <!--<div class="photo-element">-->
-                <!--<img src="/rosca/assets/img/rosca-2.jpg" alt="">-->
-                <!--<span class="info">02/01/19 - CDMX</span>-->
-            <!--</div>-->
-            <!--<div class="photo-element">-->
-                <!--<img src="/rosca/assets/img/rosca-3.jpg" alt="">-->
-                <!--<span class="info">02/01/19 - CDMX</span>-->
-            <!--</div>-->
-            <!--<div class="photo-element">-->
-                <!--<img src="/rosca/assets/img/rosca-1.jpg" alt="">-->
-                <!--<span class="info">02/01/19 - CDMX</span>-->
-            <!--</div>-->
-            <!--<div class="photo-element">-->
-                <!--<img src="/rosca/assets/img/rosca-2.jpg" alt="">-->
-                <!--<span class="info">02/01/19 - CDMX</span>-->
-            <!--</div>-->
-            <!--<div class="photo-element">-->
-                <!--<img src="/rosca/assets/img/rosca-3.jpg" alt="">-->
-                <!--<span class="info">02/01/19 - CDMX</span>-->
-            <!--</div>-->
-            <!--<div class="photo-element">-->
-                <!--<img src="/rosca/assets/img/rosca-1.jpg" alt="">-->
-                <!--<span class="info">02/01/19 - CDMX</span>-->
-            <!--</div>-->
-            <!--<div class="photo-element">-->
-                <!--<img src="/rosca/assets/img/rosca-2.jpg" alt="">-->
-                <!--<span class="info">02/01/19 - CDMX</span>-->
-            <!--</div>-->
-            <!--<div class="photo-element hidden">-->
-                <!--<img src="/rosca/assets/img/rosca-3.jpg" alt="">-->
-                <!--<span class="info">02/01/19 - CDMX</span>-->
-            <!--</div>-->
-            <!--<div class="photo-element hidden">-->
-                <!--<img src="/rosca/assets/img/rosca-1.jpg" alt="">-->
-                <!--<span class="info">02/01/19 - CDMX</span>-->
-            <!--</div>-->
-            <!--<div class="photo-element hidden">-->
-                <!--<img src="/rosca/assets/img/rosca-2.jpg" alt="">-->
-                <!--<span class="info">02/01/19 - CDMX</span>-->
-            <!--</div>-->
-            <!--<div class="photo-element hidden">-->
-                <!--<img src="/rosca/assets/img/rosca-3.jpg" alt="">-->
-                <!--<span class="info">02/01/19 - CDMX</span>-->
-            <!--</div>-->
         </div>
     </div>
 </section>

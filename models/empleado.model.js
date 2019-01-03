@@ -1,6 +1,6 @@
 const mongoose = require('mongoose');
 const Schema = mongoose.Schema;
-const { ObjectID } = require('mongodb');
+const {ObjectID} = require('mongodb');
 const validator = require('validator');
 const jwt = require('jsonwebtoken');
 const bcrypt = require('bcryptjs');
@@ -64,7 +64,7 @@ let EmpleadoSchema = new mongoose.Schema({
             required: true
         }
     }]
-}, { collection: 'empleados' });
+}, {collection: 'empleados'});
 
 // EmpleadoSchema.methods.toJSON = function () {
 //     let empleado = this;
@@ -75,7 +75,7 @@ let EmpleadoSchema = new mongoose.Schema({
 EmpleadoSchema.methods.generateAuth = function () {
     let empleado = this;
     let access = 'auth';
-    let token = jwt.sign({ _id: empleado._id.toHexString(), access }, process.env.JWT_SECRET).toString();
+    let token = jwt.sign({_id: empleado._id.toHexString(), access}, process.env.JWT_SECRET).toString();
 
     var accessToken = empleado.tokens.filter((token) => {
         return token.access === access;
@@ -83,7 +83,7 @@ EmpleadoSchema.methods.generateAuth = function () {
     if (accessToken[0]) {
         accessToken[0].token = token;
     } else {
-        empleado.tokens.push({ access, token });
+        empleado.tokens.push({access, token});
     }
     empleado.save();
     return token;
@@ -122,12 +122,12 @@ EmpleadoSchema.pre('save', function (next) {
 });
 
 EmpleadoSchema.statics.findByCredentials = function (email, password) {
-    return Empleado.findOne({ email }, (err, empleado) => {
-        if (!empleado) return Promise.reject({ message: 'Empleado no encontrado' });
+    return Empleado.findOne({email}, (err, empleado) => {
+        if (!empleado) return Promise.reject({message: 'Empleado no encontrado'}).catch(() => {
+        });
         return new Promise((resolve, reject) => {
             bcrypt.compare(password, empleado.password, (err, res) => {
                 if (res) return empleado;
-                else reject();
             });
         });
     });
@@ -137,7 +137,7 @@ EmpleadoSchema.methods.removeToken = function (token) {
     let empleado = this;
     return empleado.update({
         $pull: {
-            tokens: { token }
+            tokens: {token}
         }
     });
 };
@@ -148,6 +148,7 @@ EmpleadoSchema.statics.datosEmpleados = function () {
             return Promise.reject({
                 message: 'Error consultando los empleados.',
                 error: err
+            }).catch(() => {
             });
         }
         return empleados;
@@ -164,24 +165,24 @@ list = (req, res) => {
                 error: err
             });
         }
-        return res.status(200).send({ 'empleados': empleados });
+        return res.status(200).send({'empleados': empleados});
     });
 };
 
 findById = (req, res) => {
     if (ObjectID.isValid(req.params.id)) {
-        Empleado.findOne({ _id: req.params.id }, (err, empleado) => {
+        Empleado.findOne({_id: req.params.id}, (err, empleado) => {
             if (err) {
                 return res.status(500).json({
                     message: 'Error consultando el empleado ' + req.params.id,
                     error: err
                 });
             }
-            if (!empleado) return res.status(404).send({ message: 'Empleado no encontrado.' });
-            return res.status(200).send({ 'empleado': empleado });
+            if (!empleado) return res.status(404).send({message: 'Empleado no encontrado.'});
+            return res.status(200).send({'empleado': empleado});
         });
     } else {
-        return res.status(500).send({ message: 'Identificador de empleado no valido.' });
+        return res.status(500).send({message: 'Identificador de empleado no valido.'});
     }
 };
 
@@ -194,7 +195,7 @@ create = async function (req, res) {
         const token = empleado.generateAuth();
         res.header('x-auth', token).send(empleado);
     } catch (err) {
-        res.status(400).send({ message: err.message });
+        res.status(400).send({message: err.message});
     }
 };
 
@@ -235,14 +236,19 @@ login = async function (req, res, next) {
                 break;
         }
 
+        var scripts = [
+            {script: '/rosca/assets/js/vendor/jquery.js'},
+            {script: '/rosca/assets/js/client.js'}
+        ];
         res.render('admin', {
+            scripts: scripts,
             empleados: datos,
             regiones: regionesDisponibles,
             rol: empleadoResult.rol.nombre,
             actionForm: action
         });
     } catch (err) {
-        res.status(400).send({ message: err.message });
+        res.status(400).send({message: err.message});
     }
 };
 
@@ -254,90 +260,89 @@ logout = async function (req, res) {
 
         return empleado;
     }).catch((e) => {
-        res.status(401).send({ message: 'Necesita autenticarse para acceder a este elemento' });
+        res.status(401).send({message: 'Necesita autenticarse para acceder a este elemento'});
     });
     let empleado = await tempEmployee.removeToken(token);
-    res.status(200).send({ empleado });
+    res.status(200).send({empleado});
 }
 
 listSelectedEmployees = (req, res) => {
     // Empleado.find({ $and: [{ "seleccionado": true }, { premio: { "$eq": null } }] })
-    Empleado.find({ "seleccionado": true }, (err, empleados) => {
+    Empleado.find({"seleccionado": true}, (err, empleados) => {
         if (err) {
             return res.status(500).json({
                 message: 'Error consultando los empleados seleccionados.',
                 error: err
             });
         }
-        return res.status(200).send({ 'seleccionados': empleados });
+        return res.status(200).send({'seleccionados': empleados});
     });
 };
 
 listWinnersEmployees = (req, res) => {
-    Empleado.find({ 'premio': { "$ne": null } }, (err, empleados) => {
+    Empleado.find({'premio': {"$ne": null}}, (err, empleados) => {
         if (err) {
             return res.status(500).json({
                 message: 'Error consultando los empleados seleccionados.',
                 error: err
             });
         }
-        return res.status(200).send({ 'premiados': empleados });
+        return res.status(200).send({'premiados': empleados});
     });
 };
 
 findByNoEmpleado = (req, res) => {
-    Empleado.findOne({ noEmpleado: req.params.noEmpleado }, (err, empleado) => {
+    Empleado.findOne({noEmpleado: req.params.noEmpleado}, (err, empleado) => {
         if (err) {
             return res.status(500).json({
                 message: 'Error consultando el empleado con el numero ' + req.params.noEmpleado,
                 error: err
             });
         }
-        if (!empleado) return res.status(200).send({ message: 'No se encontro empleados con el numero ' + req.params.noEmpleado });
-        return res.status(200).send({ 'empleado': empleado });
+        if (!empleado) return res.status(200).send({message: 'No se encontro empleados con el numero ' + req.params.noEmpleado});
+        return res.status(200).send({'empleado': empleado});
     });
 };
 
 cambiarEmpleadoStatus = (req, res) => {
     const id = req.body.filtroEmpleados;
-    const empleadoSeleccionado = req.body.empleadoSeleccionado === 'on' ? true : false;
-    Empleado.findOneAndUpdate({ _id: id },
-        { seleccionado: empleadoSeleccionado }, (err, empleado) => {
+    Empleado.findOneAndUpdate({_id: id},
+        {seleccionado: true}, (err, empleado) => {
             if (err) {
                 return res.status(500).json({
                     message: 'Error consultando el empleado con el numero ' + req.params.noEmpleado,
                     error: err
                 });
             }
-            if (!empleado) return res.status(200).send({ message: 'No se encontro empleados con el numero ' + req.params.noEmpleado });
-            return res.status(200).send({ 'empleado': empleado });
+            if (!empleado) return res.status(200).send({message: 'No se encontro empleados con el numero ' + req.params.noEmpleado});
+            return res.status(200).send({'empleado': empleado});
         });
 }
 
 findByRegion = (req, res) => {
-    Empleado.find({ "region._id": req.params.idRegion }, (err, empleados) => {
+    Empleado.find({"region._id": req.params.idRegion}, (err, empleados) => {
         if (err) {
             return res.status(500).json({
                 message: 'Error consultando los empleados de la region ' + req.params.idRegion,
                 error: err
             });
         }
-        if (!empleados) return res.status(200).send({ message: 'No se encontro empleados con la region ' + req.params.idRegion });
-        return res.status(200).send({ 'empleados': empleados });
+        if (!empleados) return res.status(200).send({message: 'No se encontro empleados con la region ' + req.params.idRegion});
+        return res.status(200).send({'empleados': empleados});
     });
 };
 
 cambiarRol = (req, res) => {
-    Empleado.findOneAndUpdate({ _id: req.body.filtroEmpleados },
-        { rol: req.rol }, (err, empleado) => {
+    Empleado.findOneAndUpdate({_id: req.body.filtroEmpleados},
+        {rol: req.rol}, (err, empleado) => {
             if (err) {
                 return res.status(500).json({
                     message: 'Error consultando el empleado con el numero ' + req.params.noEmpleado,
                     error: err
                 });
             }
-            if (!empleado) return res.status(200).send({ message: 'No se encontro empleados con el numero ' + req.params.noEmpleado });
-            return res.status(200).send({ 'empleado': empleado });
+            if (!empleado) return res.status(200).send({message: 'No se encontro empleados con el numero ' + req.params.noEmpleado});
+            return res.status(200).send({'empleado': empleado});
         });
 }
 
@@ -347,6 +352,7 @@ datosEmpleados = function () {
             return Promise.reject({
                 message: 'Error consultando los empleados.',
                 error: err
+            }).catch(() => {
             });
         }
         return empleados;
@@ -354,11 +360,12 @@ datosEmpleados = function () {
 };
 
 datosEmpleadoById = function (id) {
-    return Empleado.findById({ _id: id }, (err, empleado) => {
+    return Empleado.findById({_id: id}, (err, empleado) => {
         if (err) {
             return Promise.reject({
                 message: 'Error consultando el empleado.',
                 error: err
+            }).catch(() => {
             });
         }
         return empleado;
@@ -366,11 +373,12 @@ datosEmpleadoById = function (id) {
 };
 
 asignarPremio = function (id, premio) {
-    return Empleado.findOneAndUpdate({ _id: id }, { premio }, (err, empleado) => {
+    return Empleado.findOneAndUpdate({_id: id}, {premio}, (err, empleado) => {
         if (err) {
             return Promise.reject({
                 message: 'Error consultando el empleado.',
                 error: err
+            }).catch(() => {
             });
         }
         return empleado;
@@ -378,15 +386,20 @@ asignarPremio = function (id, premio) {
 };
 
 buscarRegionesConEncargados = function () {
-    return Empleado.find({ "rol.nombre": "Encargado" }, (err, empleados) => {
+    return Empleado.find({"rol.nombre": "Encargado"}, (err, empleados) => {
         if (err) {
             return Promise.reject({
                 message: 'Error consultando el empleado.',
                 error: err
+            }).catch(() => {
             });
         }
         return empleados;
     });
+};
+
+countSelectedEmployeesByRegion = (regionId) => {
+    return Empleado.find({ $and: [{ "seleccionado": true }, {"region._id": regionId}] }).count();
 };
 
 module.exports = {
@@ -404,5 +417,6 @@ module.exports = {
     cambiarRol,
     datosEmpleados,
     datosEmpleadoById,
-    asignarPremio
+    asignarPremio,
+    countSelectedEmployeesByRegion
 };
