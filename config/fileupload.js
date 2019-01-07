@@ -1,5 +1,6 @@
 const multer = require('multer');
 const path = require('path');
+const mime = require('mime-types');
 const fs = require('fs');
 
 //MULTER CONFIG: to get file photos to temp server storage
@@ -12,13 +13,13 @@ const multerConfig = {
         destination: function (req, file, next) {
 
             var appRootDir = path.dirname(require.main.filename);
-            const startPath = appRootDir + '/views/' + process.env.UPLOADS_FOLDER;
+            const startPath = appRootDir + '/views/roscadereyes' + process.env.UPLOADS_FOLDER;
 
             if (!fs.existsSync(startPath)) {
                 console.log("No existe el directorio ", startPath);
                 fs.mkdirSync(startPath);
             }
-            destinationPath = './views/' + process.env.UPLOADS_FOLDER;
+            destinationPath = './views/roscadereyes' + process.env.UPLOADS_FOLDER;
             next(null, destinationPath);
         },
 

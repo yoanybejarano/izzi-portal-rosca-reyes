@@ -1,140 +1,318 @@
+<style type="text/css">
+    * { box-sizing: border-box; }
+    body {
+        font: 16px Arial;
+    }
+    .autocomplete {
+        /*the container must be positioned relative:*/
+        position: relative;
+        display: inline-block;
+    }
+    input {
+        border: 1px solid transparent;
+        background-color: #f1f1f1;
+        padding: 10px;
+        font-size: 16px;
+    }
+    input[type=text] {
+        background-color: #f1f1f1;
+        width: 100%;
+    }
+    input[type=submit] {
+        background-color: DodgerBlue;
+        color: #fff;
+    }
+    .autocomplete-items {
+        position: absolute;
+        border: 1px solid #d4d4d4;
+        border-bottom: none;
+        border-top: none;
+        z-index: 99;
+        /*position the autocomplete items to be the same width as the container:*/
+        top: 100%;
+        left: 0;
+        right: 0;
+    }
+    .autocomplete-items div {
+        padding: 10px;
+        cursor: pointer;
+        background-color: #fff;
+        border-bottom: 1px solid #d4d4d4;
+    }
+    .autocomplete-items div:hover {
+        /*when hovering an item:*/
+        background-color: #e9e9e9;
+    }
+    .autocomplete-active {
+        /*when navigating through the items using the arrow keys:*/
+        background-color: DodgerBlue !important;
+        color: #ffffff;
+    }
+</style>
 <div class="container mt-5 mb-5">
     <div class="row">
-        <div class="col-12">
+        <div class="col-6">
             <h1>Administración</h1>
+        </div>
+        <div class="col-2" style="margin-left: auto">
+            <form action="/roscadereyes/logout" method="post">
+                <button type="submit" class="button pink expand mt-0">Salir</button>
+            </form>
         </div>
     </div>
 </div>
+
+<section class="consulta">
+    <div class="container">
+        <label class="radio-inline"><input type="radio" name="optradio" id="perfil" checked
+                                           onclick="cargarFormularios();">Agregar empleado</label>
+        <label class="radio-inline"><input type="radio" name="optradio" id="evento" onclick="cargarFormularios();">Agregar
+            foto evento</label>
+    </div>
+</section>
+
+<section class="form-ganadores" id="sectionFormGanadores">
+    <form id="form_ganadores" novalidate="novalidate" action="/roscadereyes/empleado/seleccionar/"
+          enctype="multipart/form-data" method="post">
+        <div class="container">
+            <div class="row">
+                <div class="col-sm-12">
+                    <h2 class="mb-5">Hola Rey Mago aquí podrás ingresar a tus ganadores. <br>
+                        {{seleccionados}} seleccionado de {{limitesSeleccion.value}}</h2>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md-4">
+                    <div class="ctrl-holder">
+                        <label for="ganadores_empleado">Número de empleado</label>
+                        <input type="text" name="ganadores" id="ganadores">
+                        <!--<select name="ganadores" id="ganadores" required="" onchange="fillDatos();">-->
+
+                        <!--</select>-->
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="ctrl-holder">
+                        <label for="filtroEmpleadosAdmin">Nombre</label>
+                        <input type="text" name="ganadores_nombre" id="ganadores_nombre" required="">
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="select-holder">
+                        <label for="filtroRegiones">Región</label>
+                        <select name="filtroRegionFoto" id="filtroRegionFoto" required="">
+                            {{#each usuarioRegion}}
+                                <option value="{{this._id}}">{{this.nombre}}</option>
+                            {{/each}}
+                        </select>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="ctrl-holder">
+                        <label for="localidadPerfil">Localidad</label>
+                        <input type="text" name="localidad" id="localidad" required="">
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="ctrl-holder">
+                        <label for="antiguedad">Antigüedad </label>
+                        <input type="text" name="antiguedad" id="antiguedad" required="">
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="ctrl-holder">
+                        <label for="photo">Foto</label>
+                        <input type="file" name="photo" id="photoPerfil" >
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-sm-4">
+                    <button class="button pink expand mt-0" type="submit">Guardar Empleado</button>
+                </div>
+            </div>
+        </div>
+    </form>
+</section>
+
+<section class="form-ganadores" id="sectionFormGanadoresEvento">
+    <form id="form_ganadores_evento" action="/roscadereyes/upload/" novalidate="novalidate"
+          enctype="multipart/form-data" method="post">
+        <div class="container">
+            <div class="row">
+                <div class="col-sm-12">
+                    <h2 class="mb-5">Añadir fotos del evento</h2>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md-4">
+                    <div class="select-holder">
+                        <label for="filtroRegiones">Región</label>
+                        <select name="filtroRegionFotoEvento" id="filtroRegionFotoEvento" required="">
+                            {{#each usuarioRegion}}
+                                <option value="{{this._id}}">{{this.nombre}}</option>
+                            {{/each}}
+                        </select>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="ctrl-holder">
+                        <label for="localidad">Localidad</label>
+                        <input type="text" name="localidad" id="localidad" required="">
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="ctrl-holder">
+                        <label for="photo">Foto</label>
+                        <input type="file" name="photo" id="photoEvento" required="">
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-sm-4">
+                    <button class="button pink expand mt-0" type="submit">Subir foto</button>
+                </div>
+            </div>
+        </div>
+    </form>
+</section>
+
 <section class="consulta">
     <div class="container">
         <br>
-        <div class="row">
-            <div class="col-md-12">
-                <div class="col-12 col-md-9">
-                    <ul>
-                        <li>
-                            <p>
-                                Seleccionados por region
-                            </p>
-                        </li>
-                    </ul>
-                </div>
-                <form>
-                    <div class="container">
-                        <div class="row">
-                            <div class="col-md-4">
-                                <div class="ctrl-holder">
-                                    <label for="">Cantidad actual</label>
-                                    <input type="text" name="cantidad_seleccionados" id="cantidad_seleccionados"
-                                           required="">
+        <!--<div class="row">-->
+        <!--<div class="col-md-12">-->
+        <!--<div class="col-12 col-md-9">-->
+        <!--<ul>-->
+        <!--<li>-->
+        <!--<p>-->
+        <!--Seleccionados por region-->
+        <!--</p>-->
+        <!--</li>-->
+        <!--</ul>-->
+        <!--</div>-->
+        <!--<form>-->
+        <!--<div class="container">-->
+        <!--<div class="row">-->
+        <!--<div class="col-md-4">-->
+        <!--<div class="ctrl-holder">-->
+        <!--<label for="">Cantidad actual</label>-->
+        <!--<input type="text" name="cantidad_seleccionados" id="cantidad_seleccionados"-->
+        <!--required="">-->
+        <!--</div>-->
+        <!--</div>-->
+        <!--<div class="col-sm-4">-->
+        <!--<button type="submit" class="button pink expand mt-0"-->
+        <!--onclick="event.preventDefault();modificarLimitesSeleccionados();">-->
+        <!--Modificar-->
+        <!--</button>-->
+        <!--</div>-->
+        <!--</div>-->
+        <!--</div>-->
+        <!--</form>-->
+        <!--</div>-->
+        <!--<div class="col-md-6"></div>-->
+        <!--</div>-->
+        <!--<br>-->
+        <!--<div class="row">-->
+        <!--<div class="col-md-12">-->
+        <!--<div class="col-12 col-md-9">-->
+        <!--<ul>-->
+        <!--<li>-->
+        <!--<p>-->
+        <!--Modificar Rol-->
+        <!--</p>-->
+        <!--</li>-->
+        <!--</ul>-->
+        <!--</div>-->
+        <!--<form role="form" action={{actionForm}} method="POST" id="formEstatus">-->
+        <!--<div class="container">-->
+        <!--<div class="row">-->
+        <!--<div class="col-md-4">-->
+        <!--<div class="select-holder">-->
+        <!--<label for="filtroRegionesAdmin">Regiones</label>-->
+        <!--<select id="filtroRegionesAdmin" name="filtroRegiones" class="form-control"-->
+        <!--title="Regiones"-->
+        <!--onchange="cargarEmpleadosPorRegion();">-->
+        <!--<option>Seleccione</option>-->
+            <!--{{#each regiones}}-->
+        <!--<option value="{{this._id}}">{{this.nombre}}</option>-->
+            <!--{{/each}}-->
+        <!--</select>-->
+        <!--</div>-->
+        <!--</div>-->
+        <!--<div class="col-md-4">-->
+        <!--<div class="select-holder">-->
+        <!--<label for="filtroEmpleadosAdmin">Empleados</label>-->
+        <!--<select id="filtroEmpleadosAdmin" name="filtroEmpleados" class="form-control"-->
+        <!--title="Empleados"-->
+        <!--onchange="seleccionarEmpleado();">-->
+        <!--<option>Seleccione</option>-->
+        <!--</select>-->
+        <!--</div>-->
+        <!--</div>-->
+        <!--<div class="col-sm-4">-->
+        <!--<button type="submit" class="button pink expand mt-0"-->
+        <!--onclick="event.preventDefault();cambioEstatus();">-->
+        <!--Salvar cambios-->
+        <!--</button>-->
+        <!--</div>-->
+        <!--</div>-->
+        <!--</div>-->
+        <!--</form>-->
+        <!--</div>-->
+        <!--<div class="col-md-6"></div>-->
+        <!--</div>-->
+        <!--<br>-->
+
+        {{#ifeq rol "Admin"}}
+
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="col-12 col-md-9">
+                        <ul>
+                            <li>
+                                <p>
+                                    Asignar Premios
+                                </p>
+                            </li>
+                        </ul>
+                    </div>
+                    <form role="form" onsubmit="event.preventDefault();asignarPremio();" id="formAsignarPremio">
+                        <div class="container">
+                            <div class="row">
+                                <div class="col-md-4">
+                                    <div class="select-holder">
+                                        <label for="empleadosSeleccionados">Empleados Seleccionados</label>
+                                        <select id="empleadosSeleccionados" name="empleadosSeleccionados"
+                                                class="form-control"
+                                                title="Empleados">
+
+                                        </select>
+                                    </div>
                                 </div>
-                            </div>
-                            <div class="col-sm-4">
-                                <button type="submit" class="button pink expand mt-0" onclick="event.preventDefault();modificarLimitesSeleccionados();">
-                                    Modificar
-                                </button>
+                                <div class="col-md-4">
+                                    <div class="select-holder">
+                                        <label for="premio">Premios</label>
+                                        <select id="premios" name="premios" class="form-control" title="Premios">
+
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="col-sm-4">
+                                    <button type="submit" class="button pink expand mt-0">
+                                        Salvar cambios
+                                    </button>
+                                </div>
                             </div>
                         </div>
-                    </div>
-                </form>
-            </div>
-            <div class="col-md-6"></div>
-        </div>
-        <br>
-        <div class="row">
-            <div class="col-md-12">
-                <div class="col-12 col-md-9">
-                    <ul>
-                        <li>
-                            <p>
-                                Modificar Rol
-                            </p>
-                        </li>
-                    </ul>
+                    </form>
+
                 </div>
-                <form role="form" action={{actionForm}} method="POST" id="formEstatus">
-                    <div class="container">
-                        <div class="row">
-                            <div class="col-md-4">
-                                <div class="select-holder">
-                                    <label for="filtroRegionesAdmin">Regiones</label>
-                                    <select id="filtroRegionesAdmin" name="filtroRegiones" class="form-control"
-                                            title="Regiones"
-                                            onchange="cargarEmpleadosPorRegion();">
-                                        <option>Seleccione</option>
-                                        {{#each regiones}}
-                                            <option value="{{this._id}}">{{this.nombre}}</option>
-                                        {{/each}}
-                                    </select>
-                                </div>
-                            </div>
-                            <div class="col-md-4">
-                                <div class="select-holder">
-                                    <label for="filtroEmpleadosAdmin">Empleados</label>
-                                    <select id="filtroEmpleadosAdmin" name="filtroEmpleados" class="form-control"
-                                            title="Empleados"
-                                            onchange="seleccionarEmpleado();">
-                                        <option>Seleccione</option>
-                                    </select>
-                                </div>
-                            </div>
-                            <div class="col-sm-4">
-                                <button type="submit" class="button pink expand mt-0"
-                                        onclick="event.preventDefault();cambioEstatus();">
-                                    Salvar cambios
-                                </button>
-                            </div>
-                        </div>
-                    </div>
-                </form>
+                <div class="col-md-6"></div>
             </div>
-            <div class="col-md-6"></div>
-        </div>
-        <br>
-        <div class="row">
-            <div class="col-md-12">
-                <div class="col-12 col-md-9">
-                    <ul>
-                        <li>
-                            <p>
-                                Asignar Premios
-                            </p>
-                        </li>
-                    </ul>
-                </div>
-                <form role="form" onsubmit="event.preventDefault();asignarPremio();" id="formAsignarPremio">
-                    <div class="container">
-                        <div class="row">
-                            <div class="col-md-4">
-                                <div class="select-holder">
-                                    <label for="empleadosSeleccionados">Empleados Seleccionados</label>
-                                    <select id="empleadosSeleccionados" name="empleadosSeleccionados"
-                                            class="form-control"
-                                            title="Empleados">
 
-                                    </select>
-                                </div>
-                            </div>
-                            <div class="col-md-4">
-                                <div class="select-holder">
-                                    <label for="premio">Premios</label>
-                                    <select id="premios" name="premios" class="form-control" title="Premios">
-
-                                    </select>
-                                </div>
-                            </div>
-                            <div class="col-sm-4">
-                                <button type="submit" class="button pink expand mt-0">
-                                    Salvar cambios
-                                </button>
-                            </div>
-                        </div>
-                    </div>
-                </form>
-
-            </div>
-            <div class="col-md-6"></div>
-        </div>
+        {{/ifeq}}
 
     </div>
 
@@ -144,43 +322,117 @@
     <div class="container">
         <br>
 
-        <div class="row">
-            <div class="col-12 col-xs-12">
-                <table id="empleadosAdmin" class="" style="width:100%">
-                    <thead>
-                    <tr>
-                        <th data-field="noEmpleado">No.</th>
-                        <th data-field="nombre">Nombre</th>
-                        <th data-field="apellidos">Apellidos</th>
-                        <th data-field="area">Area</th>
-                        <th data-field="region">Region</th>
-                        <th data-field="seleccionado">Seleccionado</th>
-                        <th data-field="rol">Rol</th>
-                    </tr>
-                    </thead>
-                    <tbody>
-                    {{#each empleados}}
-                        <tr>
-                            <td>{{this.noEmpleado}}</td>
-                            <td>{{this.nombre}}</td>
-                            <td>{{this.apellidos}}</td>
-                            <td>{{this.area}}</td>
-                            <td>{{this.region.nombre}}</td>
-                            <td><input type="checkbox" {{#if this.seleccionado}}checked{{/if}}
-                                       onclick="cambiarEstatusEmpleado({{this.noEmpleado}}, {{this.seleccionado}});">
-                            </td>
-                            <td>{{this.rol.nombre}}</td>
-                        </tr>
-                    {{/each}}
-                    </tbody>
-                    <tfoot>
-                    </tfoot>
-                </table>
-            </div>
-        </div>
+        <!--<div class="row">-->
+        <!--<div class="col-12 col-xs-12">-->
+        <!--<table id="empleadosAdmin" class="" style="width:100%">-->
+        <!--<thead>-->
+        <!--<tr>-->
+        <!--<th data-field="noEmpleado">No.</th>-->
+        <!--<th data-field="nombre">Nombre</th>-->
+        <!--<th data-field="apellidos">Apellidos</th>-->
+        <!--<th data-field="area">Area</th>-->
+        <!--<th data-field="region">Region</th>-->
+        <!--<th data-field="seleccionado">Seleccionado</th>-->
+        <!--<th data-field="rol">Rol</th>-->
+        <!--</tr>-->
+        <!--</thead>-->
+        <!--<tbody>-->
+            <!--{{#each empleados}}-->
+        <!--<tr>-->
+        <!--<td>{{this.noEmpleado}}</td>-->
+        <!--<td>{{this.nombre}}</td>-->
+        <!--<td>{{this.apellidos}}</td>-->
+        <!--<td>{{this.area}}</td>-->
+        <!--<td>{{this.region.nombre}}</td>-->
+        <!--<td><input type="checkbox" {{#if this.seleccionado}}checked{{/if}}-->
+        <!--onclick="cambiarEstatusEmpleado({{this.noEmpleado}}, {{this.seleccionado}});">-->
+        <!--</td>-->
+        <!--<td>{{this.rol.nombre}}</td>-->
+        <!--</tr>-->
+            <!--{{/each}}-->
+        <!--</tbody>-->
+        <!--<tfoot>-->
+        <!--</tfoot>-->
+        <!--</table>-->
+        <!--</div>-->
+        <!--</div>-->
 
     </div>
 </section>
+
+<section class="rosca-galeria">
+
+    <div class="container">
+
+        <div class="row">
+            {{#bigger evento.length 0}}
+                {{#bigger perfiles.length 0}}
+                    <div class="col-sm-8">
+                        <p class="mt-2 mb-5">
+                            <a href="/roscadereyes/slider" target="_blank">Ver todas las fotos</a>
+                            <!--<a href="#" class="load-gallery">Ver todas las fotos</a>-->
+                        </p>
+                    </div>
+                {{/bigger}}
+            {{/bigger}}
+            <div class="col-sm-8">
+                <div class="h1 mb-5">Evento</div>
+            </div>
+        </div>
+
+
+        <div class="gallery-grid">
+
+            {{#length evento 0}}
+                <p class="mt-2 mb-5" style="font-style: italic">
+                    Aun no hay fotos de eventos disponibles
+                </p>
+            {{/length}}
+
+            {{#each evento as |file index|}}
+                <div class="photo-element {{#bigger index 8}}hidden{{/bigger}}">
+                    <a href="{{file.archivoDir}}" target="_blank">
+                        <img src={{file.archivoDir}} alt="{{index}}">
+                    </a>
+                    <span class="info">{{file.datosArchivo.region.nombre}}</span>
+                </div>
+            {{/each}}
+
+        </div>
+    </div>
+    <br>
+    <div class="container">
+        <div class="row">
+            <div class="col-sm-8">
+                <div class="h1 mb-5">Perfiles</div>
+            </div>
+            <div class="col-sm-4 sm-text-right">
+                <p class="mt-2 mb-5">
+                    <!--<a href="#" class="load-gallery">Ver todas las fotos</a>-->
+                </p>
+            </div>
+        </div>
+        <div class="gallery-grid">
+
+            {{#length perfiles 0}}
+                <p class="mt-2 mb-5" style="font-style: italic">
+                    Aun no hay agregados empleados
+                </p>
+            {{/length}}
+
+            {{#each perfiles as |file index|}}
+                <div class="photo-element {{#bigger index 8}}hidden{{/bigger}}">
+                    <a href="{{file.direccion}}" target="_blank">
+                        <img src={{file.direccion}} alt="{{index}}">
+                    </a>
+                    <span class="info">{{file.empleado.nombre}} {{file.empleado.apellidos}}</span>
+                </div>
+            {{/each}}
+
+        </div>
+    </div>
+</section>
+
 
 {{#each scripts}}
     <script src="{{script}}"></script>
@@ -188,5 +440,9 @@
 <script>
     cargarEmpleadosSeleccionados();
     cargarPremiosSinAsignar();
-    cargarLimitesSeleccionados();
+    // cargarLimitesSeleccionados();
+    // listEmpleadosParaFotos();
+    // listRegionesParaFotos();
+    cargarFormularios();
+    loadIds();
 </script>

@@ -47,7 +47,7 @@ findById = (req, res) => {
 };
 
 
-datosRolByNombre = (nombre) => {
+datosRolByNombre = function (nombre){
     return Rol.findOne({ nombre }, (err, rol) => {
         if (err) {
             return Promise.reject({

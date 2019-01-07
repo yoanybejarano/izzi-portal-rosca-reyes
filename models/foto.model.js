@@ -4,7 +4,7 @@ const {ObjectID} = require('mongodb');
 const path = require('path');
 const fs = require('fs');
 const appRootDir = path.dirname(require.main.filename);
-const startPath = appRootDir + '/views/' + process.env.UPLOADS_FOLDER;
+const startPath = appRootDir + '/views/roscadereyes' + process.env.UPLOADS_FOLDER;
 
 
 const FotoSchema = new mongoose.Schema({
@@ -13,6 +13,7 @@ const FotoSchema = new mongoose.Schema({
         ref: '{ref}'
     },
     archivo: String,
+    localidad: String,
     empleado: {
         type: Schema.Types.ObjectId,
         ref: 'empleados'
@@ -70,25 +71,59 @@ datosFotos = () => {
     });
 };
 
+datosFotosPerfiles = () => {
+    return Foto.find({ 'empleado': { $ne: null } }, (err, fotos) => {
+        if (err) {
+            return Promise.reject({
+                message: 'Error consultando las fotos.',
+                error: err
+            });
+        }
+        return fotos;
+    });
+};
+
+datosFotosEvento = () => {
+    return Foto.find({ 'empleado': { $eq: null } }, (err, fotos) => {
+        if (err) {
+            return Promise.reject({
+                message: 'Error consultando las fotos.',
+                error: err
+            });
+        }
+        return fotos;
+    });
+};
+
 salvarFoto = (req, res) => {
-    const empleado = req.body.filtroEmpleadosAdmin ? ObjectID(req.body.filtroEmpleadosAdmin) : null;
+    const empleado = req.body.filtroEmpleadosFoto;
     const archivo = req.file.originalname;
-    console.log(req.body.filtroRegiones);
-    const region = {"_id": req.body.filtroRegiones, "nombre": req.body.regionObject.nombre};
+    const region = {"_id": req.body.filtroRegionFoto, "nombre": req.body.regionObject.nombre};
+    const localidad = req.body.localidad;
+    let foto = new Foto({archivo, empleado, region, localidad});
+    foto._id = new ObjectID();
+    foto.save();
+    res.status(200).redirect('/roscadereyes/admin');
+};
+
+salvarFotoPerfil = (filtroEmpleadosFoto,nombreArchivo,filtroRegionFoto, nombreRegion ) => {
+    const empleado = ObjectID(filtroEmpleadosFoto);
+    const archivo = nombreArchivo;
+    const region = {"_id": filtroRegionFoto, "nombre": nombreRegion};
     let foto = new Foto({archivo, empleado, region});
     foto._id = new ObjectID();
     foto.save();
 };
 
-listaDatosArchivos = async (region) => {
+listaDatosArchivosEvento = async (region) => {
     let viewData = [];
     let fotos;
     if (region) {
-        fotos = await datosFotos().filter((item) => {
+        fotos = await datosFotosEvento().filter((item) => {
             item.region === region;
         });
     } else {
-        fotos = await datosFotos();
+        fotos = await datosFotosEvento();
     }
 
     if (!fs.existsSync(startPath)) {
@@ -102,14 +137,50 @@ listaDatosArchivos = async (region) => {
             const datosFoto = fotos.filter((item) => {
                 return item.archivo === element
             });
-            const viewArchivo = {
-                "datosArchivo": datosFoto[0],
-                "archivoDir": process.env.UPLOADS_FOLDER + '/' + datosFoto[0].archivo
-            };
-            viewData.push(viewArchivo);
+            if (datosFoto[0]){
+                const viewArchivo = {
+                    "datosArchivo": datosFoto[0],
+                    "archivoDir": '/roscadereyes' + process.env.UPLOADS_FOLDER + '/' + datosFoto[0].archivo
+                };
+                viewData.push(viewArchivo);
+            }
         });
     }
-    return viewData.slice(viewData.length - 8, viewData.length).reverse();
+    return viewData.reverse();
+};
+
+listaDatosArchivosPerfiles = async (region) => {
+    let viewData = [];
+    let fotos;
+    if (region) {
+        fotos = await datosFotosPerfiles().filter((item) => {
+            item.region === region;
+        });
+    } else {
+        fotos = await datosFotosPerfiles();
+    }
+
+    if (!fs.existsSync(startPath)) {
+        console.log("No existe el directorio ", startPath);
+        return;
+    }
+
+    const archivosFotos = fs.readdirSync(startPath);
+    if (archivosFotos.length > 0 && fotos.length > 0) {
+        archivosFotos.forEach((element, index) => {
+            const datosFoto = fotos.filter((item) => {
+                return item.archivo === element
+            });
+            if (datosFoto[0]){
+                const viewArchivo = {
+                    "datosArchivo": datosFoto[0],
+                    "archivoDir": '/roscadereyes' + process.env.UPLOADS_FOLDER + '/' + datosFoto[0].archivo
+                };
+                viewData.push(viewArchivo);
+            }
+        });
+    }
+    return viewData.reverse();
 };
 
 listaArchivos = async (req, res) => {
@@ -156,6 +227,8 @@ module.exports = {
     findById,
     datosFotos,
     salvarFoto,
-    listaDatosArchivos,
-    listaArchivos
+    listaDatosArchivosEvento,
+    listaArchivos,
+    listaDatosArchivosPerfiles,
+    salvarFotoPerfil
 };

@@ -2,7 +2,7 @@ var premios = require('../models/premio.model');
 var empleados = require('../models/empleado.model');
 
 module.exports = function (app) {
-    app.route("/premios")
+    app.route("/roscadereyes/premios")
         .all((req, res, next) => {
             // Middleware for preexecution of routes\
             delete req.body.id;
@@ -13,7 +13,7 @@ module.exports = function (app) {
             premios.list(req, res);
         });
 
-    app.route("/premios/:id")
+    app.route("/roscadereyes/premios/:id")
         .all((req, res, next) => {
             // Middleware for preexecution of routes\
             delete req.body.id;
@@ -24,7 +24,7 @@ module.exports = function (app) {
             premios.findById(req, res);
         });
 
-    app.route("/premios/empleado/:noEmpleado")
+    app.route("/roscadereyes/premios/empleado/:noEmpleado")
         .all((req, res, next) => {
             // Middleware for preexecution of routes\
             delete req.body.id;
@@ -35,7 +35,7 @@ module.exports = function (app) {
             premios.findByNoEmpleado(req, res);
         });
 
-    app.route("/empleadosganadores")
+    app.route("/roscadereyes/empleadosganadores")
         .all((req, res, next) => {
             // Middleware for preexecution of routes\
             delete req.body.id;
@@ -46,7 +46,7 @@ module.exports = function (app) {
             premios.listEmpleadosGanadores(req, res);
         });
 
-    app.route("/premiosdisponilbles")
+    app.route("/roscadereyes/premiosdisponilbles")
         .all((req, res, next) => {
             // Middleware for preexecution of routes\
             delete req.body.id;

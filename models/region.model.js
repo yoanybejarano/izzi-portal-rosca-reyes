@@ -71,10 +71,23 @@ datosRegionById = (id) => {
     });
 };
 
+datosRegionByNombre = (nombre) => {
+    return Region.findOne({nombre}, (err, region) => {
+        if (err) {
+            return Promise.reject({
+                message: 'Error consultando la region con id ' + id ,
+                error: err
+            });
+        }
+        return region;
+    });
+};
+
 
 module.exports = {
     list,
     findById,
     datosRegiones,
-    datosRegionById
+    datosRegionById,
+    datosRegionByNombre
 };

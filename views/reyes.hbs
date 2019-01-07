@@ -4,85 +4,76 @@
             <h1>Reyes Magos</h1>
         </div>
         <div class="col-6">
-            <a href="/admin" class="button pink expand mt-0">Administración</a>
+            <a href="/roscadereyes/admin" class="button pink expand mt-0">Agregar concursantes y fotos</a>
         </div>
     </div>
 </div>
-<section class="form-ganadores">
-    <form action="/upload" id="form_ganadores" novalidate="novalidate" enctype="multipart/form-data" method="POST">
-        <div class="container">
-            <div class="row">
-                <div class="col-sm-12">
-                    <h2 class="mb-5">Hola Rey Mago aquí podrás ingresar a tus ganadores</h2>
-                </div>
-            </div>
-            <div class="row">
-                <div class="col-md-4">
-                    <div class="select-holder">
-                        <label for="filtroEmpleadosAdmin">Nombre</label>
-                        <!--<input type="text" name="ganadores_nombre" id="ganadores_nombre" required="">-->
-                        <select name="filtroEmpleadosAdmin" id="filtroEmpleadosAdmin"
-                                onchange="cargarNumeroEmpleado();">
-                            <option value="">Selecciona tu nombre</option>
-                            {{#each empleados}}
-                                <option value="{{this.id}}">{{this.nombre}} {{this.apellidos}}</option>
-                            {{/each}}
-                        </select>
-                    </div>
-                </div>
-                <div class="col-md-4">
-                    <div class="ctrl-holder">
-                        <label for="ganadores_empleado">Número de empleado</label>
-                        <input type="text" name="ganadores" id="ganadores" disabled>
-                    </div>
-                </div>
-                <div class="col-md-4">
-                    <div class="select-holder">
-                        <label for="filtroRegiones">Localidad</label>
-                        <select name="filtroRegiones" id="filtroRegiones" required="">
-                            <option value="">Selecciona tu localidad</option>
-                            {{#each regiones}}
-                                <option value="{{this.id}}">{{this.nombre}}</option>
-                            {{/each}}
-                        </select>
-                    </div>
-                </div>
-                <div class="col-md-4">
-                    <div class="ctrl-holder">
-                        <label for="photo">Foto</label>
-                        <input type="file" name="photo" id="photo" required="">
-                    </div>
-                </div>
-            </div>
-            <div class="row">
-                <div class="col-sm-4">
-                    <button class="button pink expand mt-0" type="submit">Subir foto</button>
-                </div>
-            </div>
-        </div>
-    </form>
-</section>
+
 <section class="rosca-galeria">
+
     <div class="container">
+
         <div class="row">
+            {{#bigger evento.length 0}}
+                {{#bigger perfiles.length 0}}
+                    <div class="col-sm-8">
+                        <p class="mt-2 mb-5">
+                            <a href="/roscadereyes/slider" target="_blank">Ver todas las fotos</a>
+                            <!--<a href="#" class="load-gallery">Ver todas las fotos</a>-->
+                        </p>
+                    </div>
+                {{/bigger}}
+            {{/bigger}}
             <div class="col-sm-8">
-                <div class="h1 mb-5">Reyes Magos</div>
-            </div>
-            <div class="col-sm-4 sm-text-right">
-                <p class="mt-2 mb-5">
-                    <!--<a href="/slider" target="_blank">Ver todas las fotos</a>-->
-                    <a href="#" class="load-gallery">Ver todas las fotos</a>
-                </p>
+                <div class="h1 mb-5">Evento</div>
             </div>
         </div>
+
         <div class="gallery-grid">
 
-            {{#each archivos as |file index|}}
+            {{#length evento 0}}
+                <p class="mt-2 mb-5" style="font-style: italic">
+                    Aun no hay fotos de eventos disponibles
+                </p>
+            {{/length}}
+
+            {{#each evento as |file index|}}
                 <div class="photo-element {{#bigger index 8}}hidden{{/bigger}}">
                     <a href="{{file.archivoDir}}" target="_blank">
                         <img src={{file.archivoDir}} alt="{{index}}">
                     </a>
                     <span class="info">{{file.datosArchivo.region.nombre}}</span>
+                </div>
+            {{/each}}
+
+        </div>
+    </div>
+    <br>
+    <div class="container">
+        <div class="row">
+            <div class="col-sm-8">
+                <div class="h1 mb-5">Perfiles</div>
+            </div>
+            <div class="col-sm-4 sm-text-right">
+                <p class="mt-2 mb-5">
+                    <!--<a href="#" class="load-gallery">Ver todas las fotos</a>-->
+                </p>
+            </div>
+        </div>
+        <div class="gallery-grid">
+
+            {{#length perfiles 0}}
+                <p class="mt-2 mb-5" style="font-style: italic">
+                    Aun no hay agregados empleados
+                </p>
+            {{/length}}
+
+            {{#each perfiles as |file index|}}
+                <div class="photo-element {{#bigger index 8}}hidden{{/bigger}}">
+                    <a href="{{file.direccion}}" target="_blank">
+                        <img src={{file.direccion}} alt="{{index}}">
+                    </a>
+                    <span class="info">{{file.empleado.nombre}} {{file.empleado.apellidos}}</span>
                 </div>
             {{/each}}
 

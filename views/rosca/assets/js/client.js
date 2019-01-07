@@ -1,11 +1,10 @@
-
 function consultaPorNumeroEmpleado() {
     $('#premiadosContent').addClass('hidden');
     var noEmpleado = $('#search').val();
 
     $.ajax({
-        // url: "http://localhost:3000/empleado/" + noEmpleado
-        url: "http://localhost:3000/empleado/" + noEmpleado
+        // url: "/roscadereyes/empleado/" + noEmpleado
+        url: "/roscadereyes/empleado/" + noEmpleado
     }).then(function (data) {
 
         if (data.message) {
@@ -39,7 +38,7 @@ function obtenerEmpleadosPremiados() {
     $('#premiados').DataTable().destroy();
 
     $.ajax({
-        url: "http://localhost:3000/premiados"
+        url: "/roscadereyes/premiados"
     }).then(function (data) {
         if (!data.message) {
 
@@ -71,7 +70,7 @@ function obtenerEmpleadosPremiados() {
                     }
                 }, "data": dataSet,
                 "columnDefs": [
-                    { "className": "dt-center", "targets": "_all" }
+                    {"className": "dt-center", "targets": "_all"}
                 ]
             });
 
@@ -92,7 +91,7 @@ function cargarImagenes() {
     var region = $('#ganadores_localidad').val();
 
     $.ajax({
-        url: "http://localhost:3000/galeria/" + region
+        url: "/roscadereyes/galeria/" + region
     }).then(function (data) {
         var fotosEventos = $('#fotosEventos');
         var fotosPerfiles = $('#fotosPerfiles');
@@ -118,7 +117,7 @@ function cargarEmpleadosPorRegion() {
     } else {
         var regionId = $('#filtroRegionesAdmin').children("option:selected").val();
         $.ajax({
-            url: "http://localhost:3000/empleado/region/" + regionId
+            url: "/roscadereyes/empleado/region/" + regionId
         }).then(function (data) {
 
             var empleadosDropDown = $("#filtroEmpleadosAdmin");
@@ -158,7 +157,7 @@ function seleccionarEmpleado() {
 
 function cargarEmpleadosSeleccionados() {
     $.ajax({
-        url: "http://localhost:3000/seleccionados"
+        url: "/roscadereyes/seleccionados"
     }).then(function (data) {
         var empleadosDropDown = $("#empleadosSeleccionados");
         empleadosDropDown.empty();
@@ -172,7 +171,7 @@ function cargarEmpleadosSeleccionados() {
 
 function cargarPremiosSinAsignar() {
     $.ajax({
-        url: "http://localhost:3000/premiosdisponilbles"
+        url: "/roscadereyes/premiosdisponilbles"
     }).then(function (data) {
         var premiosDropDown = $("#premios");
         premiosDropDown.empty();
@@ -187,28 +186,60 @@ function cargarPremiosSinAsignar() {
 function asignarPremio() {
     var idEmpleado = $('#empleadosSeleccionados option:selected').val();
     var idPremio = $('#premios option:selected').val();
-    var url = "http://localhost:3000/empleado/" + idEmpleado + "/premio/" + idPremio;
+    var url = "/roscadereyes/empleado/" + idEmpleado + "/premio/" + idPremio;
     $.ajax({
         url: url,
         method: 'POST'
     }).then(function (data) {
         if (data.premio) {
             alert('Premio asignado correctamente.');
-            $('#formAsignarPremio').trigger("reset");dis
+            $('#formAsignarPremio').trigger("reset");
+            dis
         }
     });
 }
 
-function uploadFile() {
-    var region = $('#filtroRegionesAdmin option:selected').val();
-    var empleado = $('#filtroEmpleadosAdmin option:selected').val();
+function uploadFileEvento() {
+    var region = $('#filtroRegionFotoEvento option:selected').val();
+    var photoEvento = $('#photoEvento').prop('files')[0];
+    var formData = new FormData();
+    formData.append('filtroRegionFotoEvento', region);
+    formData.append('photo', photoEvento);
     $.ajax({
-        url: "http://localhost:3000/upload",
+        url: "/roscadereyes/upload/",
         method: 'POST',
-        data: { region, empleado }
+        data: formData,
+        contentType: false,
+        processData: false
     }).then(function (data) {
-        if (data.premio) {
-            alert('Premio asignado correctamente.');
+        if (data.message) {
+            alert(data.message);
+        }
+    });
+}
+
+function uploadFotoPerfil() {
+    $('form_ganadores').on('submit', function (e) {
+        e.preventDefault();
+    });
+    var filtroEmpleadosFoto = $('#ganadores_nombre').val();
+    var filtroRegionFoto = $('#filtroRegionFoto option:selected').val();
+    var noEmpleado = $('#ganadores').val()
+    var photo = $('#photoPerfil').prop('files')[0];
+    var formData = new FormData();
+    formData.append('filtroEmpleadosFoto', filtroEmpleadosFoto);
+    formData.append('filtroRegionFoto', filtroRegionFoto);
+    formData.append('noEmpleado', noEmpleado);
+    formData.append('photo', photo);
+    $.ajax({
+        url: "/roscadereyes/empleado/create/",
+        method: 'POST',
+        data: formData,
+        contentType: false,
+        processData: false
+    }).then(function (data) {
+        if (data.message) {
+            alert(data.message);
         }
     });
 }
@@ -218,21 +249,21 @@ function cambioEstatus() {
     var empleadoSeleccionado;
     if ($('#empleadoEncargado').length) {
         empleadoSeleccionado = $('#empleadoEncargado').val();
-    }else {
+    } else {
         empleadoSeleccionado = $('#empleadoSeleccionado').val();
     }
     var filtroRegiones = $('#filtroRegionesAdmin option:selected').val();
     var url = $("#formEstatus").attr('action');
     $.ajax({
-        url: "http://localhost:3000" + url,
+        url: "" + url,
         method: 'POST',
-        data: { filtroEmpleados, empleadoSeleccionado, filtroRegiones }
+        data: {filtroEmpleados, empleadoSeleccionado, filtroRegiones}
     }).then(function (data) {
         if (data.message) {
             alert(data.message);
         }
         if (data.empleado) {
-            alert('Cambio exitoso. La tabla no se autorecarga, asi que refresca la pagina');
+            alert('Cambio exitoso.');
             $("#empleadosAdmin").load(location.href + " #empleadosAdmin>*", "");
             $('#formEstatus').trigger("reset");
         }
@@ -242,7 +273,7 @@ function cambioEstatus() {
 function cargarNumeroEmpleado() {
     var id = $('#filtroEmpleadosAdmin option:selected').val();
     $.ajax({
-        url: "http://localhost:3000/empleado/datos/" + id
+        url: "/roscadereyes/empleado/datos/" + id
     }).then(function (data) {
         if (data.empleado) {
             $("#ganadores").val(data.empleado.noEmpleado);
@@ -253,7 +284,7 @@ function cargarNumeroEmpleado() {
 function cargarLimitesSeleccionados() {
     var keyName = 'Seleccionados';
     $.ajax({
-        url: "http://localhost:3000/limites/key/" + keyName
+        url: "/roscadereyes/limites/key/" + keyName
     }).then(function (data) {
         if (data.limite) {
             $("#cantidad_seleccionados").val(data.limite.value);
@@ -264,16 +295,79 @@ function cargarLimitesSeleccionados() {
 function modificarLimitesSeleccionados() {
     var nuevaCantidad = $('#cantidad_seleccionados').val();
     $.ajax({
-        url: "http://localhost:3000/limites/modificar_seleccionados",
+        url: "/roscadereyes/limites/modificar_seleccionados",
         method: 'POST',
-        data: {cantidadLimite : nuevaCantidad}
+        data: {cantidadLimite: nuevaCantidad}
     }).then(function (data) {
         if (data.nuevaCantidad) {
             $("#cantidad_seleccionados").val(data.nuevaCantidad);
-            alert('Cantidad limite actualizada correectamente a ' + data.nuevaCantidad);
+            alert('Cantidad limite actualizada correctamente a ' + data.nuevaCantidad);
         }
     });
 }
+
+function cargarFormularios() {
+    if ($('#perfil').is(":checked")) {
+        $("#sectionFormGanadores").removeClass("hidden");
+        $("#sectionFormGanadoresEvento").addClass("hidden");
+    } else {
+        $("#sectionFormGanadores").addClass("hidden");
+        $("#sectionFormGanadoresEvento").removeClass("hidden");
+    }
+}
+
+function listEmpleadosParaFotos() {
+    $("#ganadores").prop('selectedIndex', 0);
+    var regionId = $('#filtroRegionFoto option:selected').val();
+    $.ajax({
+        url: "/roscadereyes/empleado/region/" + regionId
+    }).then(function (data) {
+
+        var empleadosDropDown = $("#ganadores");
+        empleadosDropDown.empty();
+        empleadosDropDown.append($("<option />").text('Seleccione'));
+        $.each(data.empleados, function (index, item) {
+            // if (item.seleccionado === false && item.rol.nombre !== 'Encargado') {
+            //     var option = $("<option />").val(item.nombre + ' ' + item.apellidos).text(this.noEmpleado).attr('antiguedad', item.antiguedad).attr('localidad', item.antiguedad);
+            //     empleadosDropDown.append(option);
+            // }
+            var option = $("<option />").val(item.nombre).text(this.noEmpleado);
+            option.attr('antiguedad', item.antiguedad);
+            option.attr('localidad', item.antiguedad);
+            empleadosDropDown.append(option);
+        });
+    });
+}
+
+function fillDatos(noEmpleado) {
+
+    $.ajax({
+        url: "/roscadereyes/empleado/" + noEmpleado
+    }).then(function (data) {
+        $('#ganadores_nombre').val(data.empleado.nombre);
+        $('#localidad').val(data.empleado.localidad);
+        if (data.empleado.antiguedad) {
+            var format = moment(data.empleado.antiguedad)._f;
+            moment.locale('es');
+            var antiguedad = moment(data.empleado.antiguedad, format).fromNow();
+            $('#antiguedad').val(antiguedad);
+            // $('#antiguedad').val(data.empleado.antiguedad);
+        }else{
+            $('#antiguedad').val('Desconocida');
+        }
+    });
+}
+
+function loadIds() {
+    var regionId = $('#filtroRegionFoto option:selected').val();
+    $.ajax({
+        url: "/roscadereyes/empleadoids/" + regionId
+    }).then(function (data) {
+        console.log(data.identificadores.map(e => e.noEmpleado));
+        autocomplete(document.getElementById("ganadores"), data.identificadores.map(e => e.noEmpleado));
+    });
+}
+
 
 
 

@@ -1,7 +1,7 @@
 var limites = require('../models/limites.model');
 
 module.exports = function (app) {
-    app.route("/limites")
+    app.route("/roscadereyes/limites")
         .all((req, res, next) => {
             // Middleware for preexecution of routes\
             delete req.body.id;
@@ -12,7 +12,7 @@ module.exports = function (app) {
             limites.list(req, res);
         });
 
-    app.route("/limites/:id")
+    app.route("/roscadereyes/limites/:id")
         .all((req, res, next) => {
             // Middleware for preexecution of routes\
             delete req.body.id;
@@ -23,7 +23,7 @@ module.exports = function (app) {
             limites.findById(req, res);
         });
 
-    app.route("/limites/modificar_seleccionados")
+    app.route("/roscadereyes/limites/modificar_seleccionados")
         .all((req, res, next) => {
             // Middleware for preexecution of routes\
             delete req.body.id;
@@ -34,7 +34,7 @@ module.exports = function (app) {
             limites.modificarCantidadSeleccionados(req, res);
         });
 
-    app.route("/limites/key/:keyName")
+    app.route("/roscadereyes/limites/key/:keyName")
         .all((req, res, next) => {
             // Middleware for preexecution of routes\
             delete req.body.id;

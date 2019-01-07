@@ -5,6 +5,7 @@ const validator = require('validator');
 const jwt = require('jsonwebtoken');
 const bcrypt = require('bcryptjs');
 const _ = require('lodash');
+const store = require('store');
 
 let EmpleadoSchema = new mongoose.Schema({
     _id: {
@@ -15,20 +16,11 @@ let EmpleadoSchema = new mongoose.Schema({
     nombre: String,
     apellidos: String,
     area: String,
-    email: {
-        type: String,
-        required: [true, 'El email es requerido'],
-        trim: true,
-        minlength: 1,
-        unique: true,
-        validate: {
-            validator: validator.isEmail,
-            message: '{VALUE} no es un email valido.'
-        }
-    },
+    email: String,
+    localidad: String,
+    antiguedad: Date,
     password: {
         type: String,
-        require: true,
         minlength: 6
     },
     seleccionado: Boolean,
@@ -85,7 +77,10 @@ EmpleadoSchema.methods.generateAuth = function () {
     } else {
         empleado.tokens.push({access, token});
     }
-    empleado.save();
+    empleado.save(function (err, savedEmpleado) {
+        var employeeId = savedEmpleado._id;
+    });
+    ;
     return token;
 };
 
@@ -182,7 +177,7 @@ findById = (req, res) => {
             return res.status(200).send({'empleado': empleado});
         });
     } else {
-        return res.status(500).send({message: 'Identificador de empleado no valido.'});
+        return res.status(500).send({message: 'Identificador de empleado no válido.'});
     }
 };
 
@@ -194,18 +189,23 @@ create = async function (req, res) {
         empleado._id = new ObjectID();
         const token = empleado.generateAuth();
         res.header('x-auth', token).send(empleado);
+        // res.body.token = token;
     } catch (err) {
         res.status(400).send({message: err.message});
     }
 };
 
-login = async function (req, res, next) {
+login = async function (req, res) {
     try {
         const body = _.pick(req.body, ['email', 'password']);
         const empleadoResult = await Empleado.findByCredentials(body.email, body.password);
+        if (empleadoResult.rol.nombre === 'Empleado'){
+            return  res.status(401).render('login', { layout: 'auth.hbs' });
+        }
+        const regionUsuario = [empleadoResult.region];
         const empleado = new Empleado(empleadoResult);
         const token = await empleado.generateAuth();
-        res.setHeader('x-auth', token);
+        // const header = {'x-auth': token};
         const datosEmpleados = await Empleado.datosEmpleados();
         let datos = [];
         let regiones = [];
@@ -224,7 +224,7 @@ login = async function (req, res, next) {
                 });
                 regiones = _.map(datos, 'region');
                 regionesDisponibles = _.uniqBy(regiones, 'nombre');
-                action = '/cambio_estatus';
+                action = '/roscadereyes/cambio_estatus';
                 break;
             case 'Admin':
                 datos = datosEmpleados;
@@ -232,20 +232,29 @@ login = async function (req, res, next) {
                 regionesDisponibles = _.uniqBy(regiones, 'nombre').filter((item) => {
                     return !_.includes(regionesNoDisponibles, item.nombre);
                 });
-                action = '/empleado/cambiarRol';
+                action = '/roscadereyes/empleado/cambiarRol';
                 break;
         }
-
         var scripts = [
             {script: '/rosca/assets/js/vendor/jquery.js'},
-            {script: '/rosca/assets/js/client.js'}
+            {script: '/rosca/assets/js/autocomplete.js'},
+            {script: 'https://momentjs.com/downloads/moment-with-locales.js'},
+            {script: '/rosca/assets/js/client.js'},
         ];
+        store.set('x-auth', token);
+        const cantidadSeleccionados = await countSelectedEmployeesByRegion(empleadoResult.region._id);
+        // res.header('x-auth', token);
         res.render('admin', {
             scripts: scripts,
             empleados: datos,
             regiones: regionesDisponibles,
             rol: empleadoResult.rol.nombre,
-            actionForm: action
+            actionForm: action,
+            usuarioRegion: regionUsuario,
+            evento: req.body.datosArchivosEvento,
+            perfiles: req.body.empleadosPerfil,
+            seleccionados: cantidadSeleccionados,
+            limitesSeleccion: req.body.limitesSeleccion
         });
     } catch (err) {
         res.status(400).send({message: err.message});
@@ -253,7 +262,8 @@ login = async function (req, res, next) {
 };
 
 logout = async function (req, res) {
-    var token = req.header('x-auth');
+    // const token = req.header('x-auth');
+    const token = store.get('x-auth');
 
     let tempEmployee = await Empleado.findByToken(token).then((empleado) => {
         if (!empleado) return Promise.reject();
@@ -263,7 +273,8 @@ logout = async function (req, res) {
         res.status(401).send({message: 'Necesita autenticarse para acceder a este elemento'});
     });
     let empleado = await tempEmployee.removeToken(token);
-    res.status(200).send({empleado});
+    store.remove('x-auth');
+    res.status(200).redirect('/roscadereyes/galeria');
 }
 
 listSelectedEmployees = (req, res) => {
@@ -295,12 +306,25 @@ findByNoEmpleado = (req, res) => {
     Empleado.findOne({noEmpleado: req.params.noEmpleado}, (err, empleado) => {
         if (err) {
             return res.status(500).json({
-                message: 'Error consultando el empleado con el numero ' + req.params.noEmpleado,
+                message: 'Error consultando el empleado con el número ' + req.params.noEmpleado,
                 error: err
             });
         }
-        if (!empleado) return res.status(200).send({message: 'No se encontro empleados con el numero ' + req.params.noEmpleado});
+        if (!empleado) return res.status(200).send({message: 'No se encontró empleados con el número ' + req.params.noEmpleado});
         return res.status(200).send({'empleado': empleado});
+    });
+};
+
+findDatosByNoEmpleado = (noEmpleado) => {
+    Empleado.findOne({noEmpleado}, (err, empleado) => {
+        if (err) {
+            return Promise.reject({
+                message: 'Error consultando el empleado.',
+                error: err
+            }).catch(() => {
+            });
+        }
+        return empleado;
     });
 };
 
@@ -310,12 +334,12 @@ cambiarEmpleadoStatus = (req, res) => {
         {seleccionado: true}, (err, empleado) => {
             if (err) {
                 return res.status(500).json({
-                    message: 'Error consultando el empleado con el numero ' + req.params.noEmpleado,
+                    message: 'Error consultando el empleado con el número ' + req.params.noEmpleado,
                     error: err
                 });
             }
-            if (!empleado) return res.status(200).send({message: 'No se encontro empleados con el numero ' + req.params.noEmpleado});
-            return res.status(200).send({'empleado': empleado});
+            if (!empleado) return res.status(200).send({message: 'No se encontró empleados con el número ' + req.params.noEmpleado});
+            // return res.status(200).send({'empleado': empleado});
         });
 }
 
@@ -327,7 +351,7 @@ findByRegion = (req, res) => {
                 error: err
             });
         }
-        if (!empleados) return res.status(200).send({message: 'No se encontro empleados con la region ' + req.params.idRegion});
+        if (!empleados) return res.status(200).send({message: 'No se encontró empleados con la region ' + req.params.idRegion});
         return res.status(200).send({'empleados': empleados});
     });
 };
@@ -337,17 +361,30 @@ cambiarRol = (req, res) => {
         {rol: req.rol}, (err, empleado) => {
             if (err) {
                 return res.status(500).json({
-                    message: 'Error consultando el empleado con el numero ' + req.params.noEmpleado,
+                    message: 'Error consultando el empleado con el número ' + req.params.noEmpleado,
                     error: err
                 });
             }
-            if (!empleado) return res.status(200).send({message: 'No se encontro empleados con el numero ' + req.params.noEmpleado});
+            if (!empleado) return res.status(200).send({message: 'No se encontró empleados con el número ' + req.params.noEmpleado});
             return res.status(200).send({'empleado': empleado});
         });
 }
 
 datosEmpleados = function () {
     return Empleado.find({}, (err, empleados) => {
+        if (err) {
+            return Promise.reject({
+                message: 'Error consultando los empleados.',
+                error: err
+            }).catch(() => {
+            });
+        }
+        return empleados;
+    });
+};
+
+datosEmpleadosById = function (list_Ids) {
+    return Empleado.find({'_id': {$in: list_Ids}}, (err, empleados) => {
         if (err) {
             return Promise.reject({
                 message: 'Error consultando los empleados.',
@@ -399,8 +436,137 @@ buscarRegionesConEncargados = function () {
 };
 
 countSelectedEmployeesByRegion = (regionId) => {
-    return Empleado.find({ $and: [{ "seleccionado": true }, {"region._id": regionId}] }).count();
+    return Empleado.find({$and: [{"seleccionado": true}, {"region._id": regionId}]}).count();
 };
+
+crear = async function (empleadoData) {
+    try {
+        empleado = new Empleado(empleadoData);
+        empleado._id = new ObjectID();
+        // const token = empleado.generateAuth();
+        const empleadoNuevo = await empleado.save();
+        return empleadoNuevo;
+    } catch (err) {
+        console.log(err);
+    }
+};
+
+loadAdmin = async function (req, res) {
+    try {
+        const token = store.get('x-auth');
+        const empleadoResult = await Empleado.findByToken(token);
+        const regionUsuario = [empleadoResult.region];
+        const empleado = new Empleado(empleadoResult);
+        const datosEmpleados = await Empleado.datosEmpleados();
+        let datos = [];
+        let regiones = [];
+        let action;
+        const regionesEncargados = await buscarRegionesConEncargados();
+        const resultRegions = _.uniqBy(regionesEncargados, 'region');
+        const regionesConEncargados = _.map(resultRegions, 'region');
+        const regionesNoDisponibles = _.map(regionesConEncargados, 'nombre');
+        let regionesDisponibles = [];
+        switch (empleadoResult.rol.nombre) {
+            case 'Encargado':
+                datosEmpleados.forEach(item => {
+                    if (item.region._id.toHexString() === empleadoResult.region._id.toHexString()) {
+                        datos.push(item);
+                    }
+                });
+                regiones = _.map(datos, 'region');
+                regionesDisponibles = _.uniqBy(regiones, 'nombre');
+                action = '/roscadereyes/cambio_estatus';
+                break;
+            case 'Admin':
+                datos = datosEmpleados;
+                regiones = _.map(datos, 'region');
+                regionesDisponibles = _.uniqBy(regiones, 'nombre').filter((item) => {
+                    return !_.includes(regionesNoDisponibles, item.nombre);
+                });
+                action = '/roscadereyes/empleado/cambiarRol';
+                break;
+        }
+        var scripts = [
+            {script: '/rosca/assets/js/vendor/jquery.js'},
+            {script: '/rosca/assets/js/autocomplete.js'},
+            {script: 'https://momentjs.com/downloads/moment-with-locales.js'},
+            {script: '/rosca/assets/js/client.js'},
+        ];
+        // store.set('x-auth', token);
+        // res.header('x-auth', token);
+        var scripts = [
+            {script: '/rosca/assets/js/vendor/jquery.js'},
+            {script: '/rosca/assets/js/autocomplete.js'},
+            {script: 'https://momentjs.com/downloads/moment-with-locales.js'},
+            {script: '/rosca/assets/js/client.js'},
+        ];
+        const cantidadSeleccionados = await countSelectedEmployeesByRegion(empleadoResult.region._id);
+        res.render('admin', {
+            scripts: scripts,
+            empleados: datos,
+            regiones: regionesDisponibles,
+            rol: empleadoResult.rol.nombre,
+            actionForm: action,
+            usuarioRegion: regionUsuario,
+            evento: req.body.datosArchivosEvento,
+            perfiles: req.body.empleadosPerfil,
+            seleccionados: cantidadSeleccionados,
+            limitesSeleccion: req.body.limitesSeleccion
+        });
+    } catch (err) {
+        res.status(400).send({message: err.message});
+    }
+};
+
+findByTokenCode = function (token) {
+    let decoded;
+    try {
+        decoded = jwt.verify(token, process.env.JWT_SECRET);
+    } catch (e) {
+        return Promise.reject();
+    }
+    return Empleado.findOne({
+        '_id': decoded._id,
+        'tokens.token': token,
+        'tokens.access': 'auth'
+    });
+};
+
+listEmpleadosIds = function (req, res) {
+    // Empleado.find({
+    //     $and: [{'region._id': req.params.regionId},
+    //         {'rol.nombre': 'Empleado'}, {
+    //         noEmpleado: 1,
+    //         _id: 0
+    //     }]
+    // }, (err, identificadores) => {
+    Empleado.find({'region._id': req.params.regionId, 'rol.nombre': 'Empleado'}, {
+        noEmpleado: 1,
+        _id: 0
+    }, (err, identificadores) => {
+        if (err) {
+            return res.status(500).json({
+                message: 'Error consultando los empleados.',
+                error: err
+            });
+        }
+        return res.status(200).send({'identificadores': identificadores});
+    });
+}
+
+cambiarEmpleadoStatusSeleccionado = function (noEmpleado) {
+    return Empleado.findOneAndUpdate({noEmpleado: noEmpleado},
+        {seleccionado: true}, (err, empleado) => {
+            if (err) {
+                return Promise.reject({
+                    message: 'Error consultando el empleado con el número ' + req.params.noEmpleado,
+                    error: err
+                });
+            }
+            return empleado;
+        });
+}
+
 
 module.exports = {
     Empleado,
@@ -418,5 +584,12 @@ module.exports = {
     datosEmpleados,
     datosEmpleadoById,
     asignarPremio,
-    countSelectedEmployeesByRegion
+    countSelectedEmployeesByRegion,
+    datosEmpleadosById,
+    crear,
+    findDatosByNoEmpleado,
+    loadAdmin,
+    findByTokenCode,
+    listEmpleadosIds,
+    cambiarEmpleadoStatusSeleccionado
 };

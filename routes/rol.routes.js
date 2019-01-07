@@ -1,7 +1,7 @@
 var roles = require('../models/rol.model');
 
 module.exports = function (app) {
-    app.route("/roles")
+    app.route("/roscadereyes/roles")
         .all((req, res, next) => {
             // Middleware for preexecution of routes\
             delete req.body.id;
@@ -12,7 +12,7 @@ module.exports = function (app) {
             roles.list(req, res);
         });
 
-    app.route("/roles/:id")
+    app.route("/roscadereyes/roles/:id")
         .all((req, res, next) => {
             // Middleware for preexecution of routes\
             delete req.body.id;

@@ -17,7 +17,7 @@ app.listen(port, () => {
 });
 
 app.use(logger);
-app.use('/slider', gallery);
+app.use('/roscadereyes/slider', gallery);
 
 consign()
     .include("config/database.js")
@@ -27,3 +27,5 @@ consign()
 
 let configView = require('./config/views');
 app = configView(app);
+
+module.exports = {app};

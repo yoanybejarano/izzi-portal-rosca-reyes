@@ -1,7 +1,7 @@
 var regiones = require('../models/region.model');
 
 module.exports = function (app) {
-    app.route("/regiones")
+    app.route("/roscadereyes/regiones")
         .all((req, res, next) => {
             // Middleware for preexecution of routes\
             delete req.body.id;
@@ -12,7 +12,7 @@ module.exports = function (app) {
             regiones.list(req, res);
         });
 
-    app.route("/regiones/:id")
+    app.route("/roscadereyes/regiones/:id")
         .all((req, res, next) => {
             // Middleware for preexecution of routes\
             delete req.body.id;

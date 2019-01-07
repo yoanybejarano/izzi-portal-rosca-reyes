@@ -1,16 +1,20 @@
-var { Empleado } = require('../models/empleado.model');
+const { Empleado } = require('../models/empleado.model');
+const store = require('store');
 
-var authenticate = (req, res, next) => {
-    var token = req.get('x-auth');
+const authenticate = (req, res, next) => {
+    // const token = req.get('x-auth');
+    const token = store.get('x-auth');
 
     Empleado.findByToken(token).then((empleado) => {
         if (!empleado) return Promise.reject();
-
+        if(empleado.rol.nombre === 'Empleado') {
+            return res.status(401).render('login', { layout: 'auth.hbs' });
+        }
         req.empleado = empleado;
         req.token = token;
         next();
     }).catch((e) => {
-        res.render('login', { layout: 'auth.hbs' });
+        res.status(401).render('login', { layout: 'auth.hbs' });
     });
 };
 
