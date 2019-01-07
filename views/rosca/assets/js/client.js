@@ -20,7 +20,7 @@ function consultaPorNumeroEmpleado() {
             // } else {
             //     message = nombre + ' no estas entre los premiados.';
             // }
-            var nombre = data.empleado.nombre + ' ' + data.empleado.apellidos;
+            var nombre = data.empleado.nombre;
             if (data.empleado.premio) {
                 message = nombre + ' ganaste: ' + data.empleado.premio.nombre;
             } else {
@@ -47,7 +47,6 @@ function obtenerEmpleadosPremiados() {
                 var itemValues = [];
                 itemValues.push(item.noEmpleado);
                 itemValues.push(item.nombre);
-                itemValues.push(item.apellidos);
                 itemValues.push(item.area);
                 itemValues.push(item.region.nombre);
                 itemValues.push(item.premio.nombre);
@@ -339,21 +338,27 @@ function listEmpleadosParaFotos() {
     });
 }
 
-function fillDatos(noEmpleado) {
-
+function fillDatos() {
+    var noEmpleado = $('#ganadores').val();
+    var regionId = $('#filtroRegionFoto option:selected').val();
     $.ajax({
-        url: "/roscadereyes/empleado/" + noEmpleado
+        url: "/roscadereyes/empleado/" + noEmpleado + "/region/" + regionId
     }).then(function (data) {
-        $('#ganadores_nombre').val(data.empleado.nombre);
-        $('#localidad').val(data.empleado.localidad);
-        if (data.empleado.antiguedad) {
-            var format = moment(data.empleado.antiguedad)._f;
-            moment.locale('es');
-            var antiguedad = moment(data.empleado.antiguedad, format).fromNow();
-            $('#antiguedad').val(antiguedad);
-            // $('#antiguedad').val(data.empleado.antiguedad);
-        }else{
-            $('#antiguedad').val('Desconocida');
+        if(data.empleado){
+            $('#ganadores_nombre').val(data.empleado.nombre);
+            $('#localidad').val(data.empleado.localidad);
+            if (data.empleado.antiguedad) {
+                var format = moment(data.empleado.antiguedad)._f;
+                moment.locale('es');
+                var antiguedad = moment(data.empleado.antiguedad, format).fromNow();
+                $('#antiguedad').val(antiguedad);
+                // $('#antiguedad').val(data.empleado.antiguedad);
+            }else{
+                $('#antiguedad').val('Desconocida');
+            }
+            $('#submitEmpleado').removeAttr('disabled');
+        }else {
+            alert(data.message);
         }
     });
 }
@@ -363,7 +368,6 @@ function loadIds() {
     $.ajax({
         url: "/roscadereyes/empleadoids/" + regionId
     }).then(function (data) {
-        console.log(data.identificadores.map(e => e.noEmpleado));
         autocomplete(document.getElementById("ganadores"), data.identificadores.map(e => e.noEmpleado));
     });
 }

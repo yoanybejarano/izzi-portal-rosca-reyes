@@ -77,15 +77,14 @@
         <div class="container">
             <div class="row">
                 <div class="col-sm-12">
-                    <h2 class="mb-5">Hola Rey Mago aquí podrás ingresar a tus ganadores. <br>
-                        {{seleccionados}} seleccionado de {{limitesSeleccion.value}}</h2>
+                    <h2 class="mb-5">Hola Rey Mago aquí podrás ingresar a tus ganadores.</h2>
                 </div>
             </div>
             <div class="row">
                 <div class="col-md-4">
                     <div class="ctrl-holder">
                         <label for="ganadores_empleado">Número de empleado</label>
-                        <input type="text" name="ganadores" id="ganadores">
+                        <input type="text" name="ganadores" id="ganadores" onblur="fillDatos();">
                         <!--<select name="ganadores" id="ganadores" required="" onchange="fillDatos();">-->
 
                         <!--</select>-->
@@ -94,7 +93,7 @@
                 <div class="col-md-4">
                     <div class="ctrl-holder">
                         <label for="filtroEmpleadosAdmin">Nombre</label>
-                        <input type="text" name="ganadores_nombre" id="ganadores_nombre" required="">
+                        <input type="text" name="ganadores_nombre" id="ganadores_nombre" required="" disabled>
                     </div>
                 </div>
                 <div class="col-md-4">
@@ -110,13 +109,13 @@
                 <div class="col-md-4">
                     <div class="ctrl-holder">
                         <label for="localidadPerfil">Localidad</label>
-                        <input type="text" name="localidad" id="localidad" required="">
+                        <input type="text" name="localidad" id="localidad" required="" disabled>
                     </div>
                 </div>
                 <div class="col-md-4">
                     <div class="ctrl-holder">
                         <label for="antiguedad">Antigüedad </label>
-                        <input type="text" name="antiguedad" id="antiguedad" required="">
+                        <input type="text" name="antiguedad" id="antiguedad" required="" disabled>
                     </div>
                 </div>
                 <div class="col-md-4">
@@ -128,7 +127,7 @@
             </div>
             <div class="row">
                 <div class="col-sm-4">
-                    <button class="button pink expand mt-0" type="submit">Guardar Empleado</button>
+                    <button id="submitEmpleado" class="button pink expand mt-0" type="submit" disabled="disabled">Guardar Empleado</button>
                 </div>
             </div>
         </div>
@@ -438,11 +437,11 @@
     <script src="{{script}}"></script>
 {{/each}}
 <script>
-    cargarEmpleadosSeleccionados();
-    cargarPremiosSinAsignar();
+    // cargarEmpleadosSeleccionados();
+    // cargarPremiosSinAsignar();
     // cargarLimitesSeleccionados();
     // listEmpleadosParaFotos();
     // listRegionesParaFotos();
     cargarFormularios();
-    loadIds();
+    // loadIds();
 </script>

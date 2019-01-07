@@ -98,6 +98,19 @@ EmpleadoSchema.statics.findByToken = (token) => {
     });
 };
 
+EmpleadoSchema.statics.datosEmpleadosPorRegion = function (idRegion) {
+    return Empleado.find({'region._id': idRegion}, (err, empleados) => {
+        if (err) {
+            return Promise.reject({
+                message: 'Error consultando los empleados.',
+                error: err
+            }).catch(() => {
+            });
+        }
+        return empleados;
+    });
+};
+
 
 EmpleadoSchema.pre('save', function (next) {
     let empleado = this;
@@ -206,7 +219,7 @@ login = async function (req, res) {
         const empleado = new Empleado(empleadoResult);
         const token = await empleado.generateAuth();
         // const header = {'x-auth': token};
-        const datosEmpleados = await Empleado.datosEmpleados();
+        const datosEmpleados = await Empleado.datosEmpleadosPorRegion(empleadoResult.region._id);
         let datos = [];
         let regiones = [];
         let action;
@@ -237,7 +250,6 @@ login = async function (req, res) {
         }
         var scripts = [
             {script: '/rosca/assets/js/vendor/jquery.js'},
-            {script: '/rosca/assets/js/autocomplete.js'},
             {script: 'https://momentjs.com/downloads/moment-with-locales.js'},
             {script: '/rosca/assets/js/client.js'},
         ];
@@ -328,6 +340,19 @@ findDatosByNoEmpleado = (noEmpleado) => {
     });
 };
 
+findByNoEmpleadoAndRegion = (req, res) => {
+    Empleado.findOne({noEmpleado: req.params.noEmpleado, 'region._id': req.params.idregion}, (err, empleado) => {
+        if (err) {
+            return res.status(500).json({
+                message: 'Error consultando el empleado con el número ' + req.params.noEmpleado,
+                error: err
+            });
+        }
+        if (!empleado) return res.status(200).send({message: 'No se encontró empleados con el número ' + req.params.noEmpleado});
+        return res.status(200).send({'empleado': empleado});
+    });
+};
+
 cambiarEmpleadoStatus = (req, res) => {
     const id = req.body.filtroEmpleados;
     Empleado.findOneAndUpdate({_id: id},
@@ -396,6 +421,8 @@ datosEmpleadosById = function (list_Ids) {
     });
 };
 
+
+
 datosEmpleadoById = function (id) {
     return Empleado.findById({_id: id}, (err, empleado) => {
         if (err) {
@@ -457,7 +484,7 @@ loadAdmin = async function (req, res) {
         const empleadoResult = await Empleado.findByToken(token);
         const regionUsuario = [empleadoResult.region];
         const empleado = new Empleado(empleadoResult);
-        const datosEmpleados = await Empleado.datosEmpleados();
+        const datosEmpleados = await Empleado.datosEmpleadosPorRegion(empleadoResult.region._id);
         let datos = [];
         let regiones = [];
         let action;
@@ -478,7 +505,7 @@ loadAdmin = async function (req, res) {
                 action = '/roscadereyes/cambio_estatus';
                 break;
             case 'Admin':
-                datos = datosEmpleados;
+                // datos = datosEmpleados;
                 regiones = _.map(datos, 'region');
                 regionesDisponibles = _.uniqBy(regiones, 'nombre').filter((item) => {
                     return !_.includes(regionesNoDisponibles, item.nombre);
@@ -486,17 +513,10 @@ loadAdmin = async function (req, res) {
                 action = '/roscadereyes/empleado/cambiarRol';
                 break;
         }
-        var scripts = [
-            {script: '/rosca/assets/js/vendor/jquery.js'},
-            {script: '/rosca/assets/js/autocomplete.js'},
-            {script: 'https://momentjs.com/downloads/moment-with-locales.js'},
-            {script: '/rosca/assets/js/client.js'},
-        ];
         // store.set('x-auth', token);
         // res.header('x-auth', token);
         var scripts = [
             {script: '/rosca/assets/js/vendor/jquery.js'},
-            {script: '/rosca/assets/js/autocomplete.js'},
             {script: 'https://momentjs.com/downloads/moment-with-locales.js'},
             {script: '/rosca/assets/js/client.js'},
         ];
@@ -591,5 +611,6 @@ module.exports = {
     loadAdmin,
     findByTokenCode,
     listEmpleadosIds,
-    cambiarEmpleadoStatusSeleccionado
+    cambiarEmpleadoStatusSeleccionado,
+    findByNoEmpleadoAndRegion
 };

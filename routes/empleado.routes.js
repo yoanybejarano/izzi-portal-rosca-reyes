@@ -136,11 +136,10 @@ module.exports = function (app) {
             const regionUsuario = [empleadoResult.region];
             var scripts = [
                 {script: '/rosca/assets/js/vendor/jquery.js'},
-                {script: '/rosca/assets/js/autocomplete.js'},
                 {script: 'https://momentjs.com/downloads/moment-with-locales.js'},
                 {script: '/rosca/assets/js/client.js'},
             ];
-            const limites = await limites.datosLimiteByNombre('Seleccionados');
+            const limite = await limites.datosLimiteByNombre('Seleccionados');
             const cantidadSeleccionados = await empleados.countSelectedEmployeesByRegion(empleadoResult.region._id);
             res.render('admin', {
                 evento: datosArchivosEvento,
@@ -149,7 +148,7 @@ module.exports = function (app) {
                 scripts: scripts, rol:
                 empleadoResult.rol.nombre,
                 seleccionados: cantidadSeleccionados,
-                limitesSeleccion: limites
+                limitesSeleccion: limite
             });
             // empleados.loadAdmin(req, res);
         });
@@ -219,6 +218,17 @@ module.exports = function (app) {
         .get((req, res) => {
             // "/empleado": List Empleado
             empleados.listEmpleadosIds(req, res);
+        });
+
+    app.route("/roscadereyes/empleado/:noEmpleado/region/:idregion")
+        .all((req, res, next) => {
+            // Middleware for preexecution of routes\
+            delete req.body.id;
+            next();
+        })
+        .get(async (req, res) => {
+            // "/premios": List premios
+            empleados.findByNoEmpleadoAndRegion(req, res);
         });
 
 
