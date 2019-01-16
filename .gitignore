@@ -85,4 +85,7 @@ typings/
 .vscode/
 
 #upload folder content
-views/uploads/*
+views/roscadereyes/uploads/
+
+#logs content
+logs/*

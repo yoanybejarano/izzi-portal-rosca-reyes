@@ -212,8 +212,8 @@ login = async function (req, res) {
     try {
         const body = _.pick(req.body, ['email', 'password']);
         const empleadoResult = await Empleado.findByCredentials(body.email, body.password);
-        if (empleadoResult.rol.nombre === 'Empleado'){
-            return  res.status(401).render('login', { layout: 'auth.hbs' });
+        if (empleadoResult.rol.nombre === 'Empleado') {
+            return res.status(401).render('login', {layout: 'auth.hbs'});
         }
         const regionUsuario = [empleadoResult.region];
         const empleado = new Empleado(empleadoResult);
@@ -223,11 +223,11 @@ login = async function (req, res) {
         let datos = [];
         let regiones = [];
         let action;
-        const regionesEncargados = await buscarRegionesConEncargados();
-        const resultRegions = _.uniqBy(regionesEncargados, 'region');
-        const regionesConEncargados = _.map(resultRegions, 'region');
-        const regionesNoDisponibles = _.map(regionesConEncargados, 'nombre');
-        let regionesDisponibles = [];
+        // const regionesEncargados = await buscarRegionesConEncargados();
+        // const resultRegions = _.uniqBy(regionesEncargados, 'region');
+        // const regionesConEncargados = _.map(resultRegions, 'region');
+        // const regionesNoDisponibles = _.map(regionesConEncargados, 'nombre');
+        let regionesDisponibles = req.body.regiones;
         switch (empleadoResult.rol.nombre) {
             case 'Encargado':
                 datosEmpleados.forEach(item => {
@@ -236,22 +236,21 @@ login = async function (req, res) {
                     }
                 });
                 regiones = _.map(datos, 'region');
-                regionesDisponibles = _.uniqBy(regiones, 'nombre');
+                // regionesDisponibles = _.uniqBy(regiones, 'nombre');
                 action = '/roscadereyes/cambio_estatus';
                 break;
             case 'Admin':
                 datos = datosEmpleados;
                 regiones = _.map(datos, 'region');
-                regionesDisponibles = _.uniqBy(regiones, 'nombre').filter((item) => {
-                    return !_.includes(regionesNoDisponibles, item.nombre);
-                });
+                // regionesDisponibles = _.uniqBy(regiones, 'nombre').filter((item) => {
+                //     return !_.includes(regionesNoDisponibles, item.nombre);
+                // });
                 action = '/roscadereyes/empleado/cambiarRol';
                 break;
         }
         var scripts = [
-            {script: '/rosca/assets/js/vendor/jquery.js'},
             {script: 'https://momentjs.com/downloads/moment-with-locales.js'},
-            {script: '/rosca/assets/js/client.js'},
+            {script: '/rosca/assets/js/client.js'}
         ];
         store.set('x-auth', token);
         const cantidadSeleccionados = await countSelectedEmployeesByRegion(empleadoResult.region._id);
@@ -262,7 +261,7 @@ login = async function (req, res) {
             regiones: regionesDisponibles,
             rol: empleadoResult.rol.nombre,
             actionForm: action,
-            usuarioRegion: regionUsuario,
+            regionesDisponibles: regionesDisponibles,
             evento: req.body.datosArchivosEvento,
             perfiles: req.body.empleadosPerfil,
             seleccionados: cantidadSeleccionados,
@@ -422,7 +421,6 @@ datosEmpleadosById = function (list_Ids) {
 };
 
 
-
 datosEmpleadoById = function (id) {
     return Empleado.findById({_id: id}, (err, empleado) => {
         if (err) {
@@ -463,7 +461,7 @@ buscarRegionesConEncargados = function () {
 };
 
 countSelectedEmployeesByRegion = (regionId) => {
-    return Empleado.find({$and: [{"seleccionado": true}, {"region._id": regionId}]}).count();
+    return Empleado.find({$and: [{"seleccionado": true}, {"region._id": regionId}]}).countDocuments();
 };
 
 crear = async function (empleadoData) {
@@ -516,9 +514,9 @@ loadAdmin = async function (req, res) {
         // store.set('x-auth', token);
         // res.header('x-auth', token);
         var scripts = [
-            {script: '/rosca/assets/js/vendor/jquery.js'},
             {script: 'https://momentjs.com/downloads/moment-with-locales.js'},
             {script: '/rosca/assets/js/client.js'},
+            {script: 'https://cdn.datatables.net/1.10.19/js/jquery.dataTables.min.js'}
         ];
         const cantidadSeleccionados = await countSelectedEmployeesByRegion(empleadoResult.region._id);
         res.render('admin', {
@@ -553,13 +551,6 @@ findByTokenCode = function (token) {
 };
 
 listEmpleadosIds = function (req, res) {
-    // Empleado.find({
-    //     $and: [{'region._id': req.params.regionId},
-    //         {'rol.nombre': 'Empleado'}, {
-    //         noEmpleado: 1,
-    //         _id: 0
-    //     }]
-    // }, (err, identificadores) => {
     Empleado.find({'region._id': req.params.regionId, 'rol.nombre': 'Empleado'}, {
         noEmpleado: 1,
         _id: 0
@@ -587,6 +578,19 @@ cambiarEmpleadoStatusSeleccionado = function (noEmpleado) {
         });
 }
 
+listaLocalidadesPorRegion = function (req, res) {
+    return Empleado.find({"region._id": req.params.regionId}, {localidad: 1, _id: 0}, (err, localidades) => {
+        if (err) {
+            return res.status(500).json({
+                message: 'Error consultando las localidades.',
+                error: err
+            }).catch(() => {
+            });
+        }
+        return res.status(200).send({'localidades': _.uniqBy(localidades, 'localidad')});
+    });
+}
+
 
 module.exports = {
     Empleado,
@@ -612,5 +616,6 @@ module.exports = {
     findByTokenCode,
     listEmpleadosIds,
     cambiarEmpleadoStatusSeleccionado,
-    findByNoEmpleadoAndRegion
+    findByNoEmpleadoAndRegion,
+    listaLocalidadesPorRegion
 };

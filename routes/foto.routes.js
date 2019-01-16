@@ -18,21 +18,14 @@ module.exports = function (app) {
         .get(async (req, res) => {
             const datosArchivosEvento = await fotos.listaDatosArchivosEvento();
             const datosArchivosPerfiles = await fotos.listaDatosArchivosPerfiles();
-            const ids = datosArchivosPerfiles.map(a => a.datosArchivo.empleado);
-            const empleadosPerfiles = await empleados.datosEmpleadosById(ids);
-            const empleadosPerfil = [];
-            datosArchivosPerfiles.forEach(function (item, index) {
-                let empleadoObject = {};
-                const id = item.datosArchivo.empleado;
-                const empleado = _.find(empleadosPerfiles, {_id: id});
-                if (empleado) {
-                    empleadoObject.direccion = item.archivoDir;
-                    empleadoObject.empleado = empleado;
-                    console.log(empleado.noEmpleado);
-                    empleadosPerfil.push(empleadoObject);
-                }
+            const empleadosPerfiles = await empleados.datosEmpleadosById(datosArchivosPerfiles);
+            const empleadosPerfil = _.map(empleadosPerfiles, 'nombre');
+
+            // res.render('reyes', {evento: datosArchivosEvento, perfiles: empleadosPerfil});
+            res.render('reyes', {
+                evento: datosArchivosEvento,
+                perfiles: empleadosPerfil
             });
-            res.render('reyes', {evento: datosArchivosEvento, perfiles: empleadosPerfil});
         })
 
     app.route("/roscadereyes/galeria/:id")
@@ -64,7 +57,8 @@ module.exports = function (app) {
             next();
         })
         .post(multer(multerConfig).single('photo'), async (req, res) => {
-            const regionObject = await regiones.datosRegionById(req.body.filtroRegionFoto);
+            // const regionObject = await regiones.datosRegionById(req.body.filtroRegionFoto);
+            const regionObject = await regiones.datosRegionByNombre(req.body.filtroRegionFoto);
             req.body.regionObject = regionObject;
             if (!req.file) {
                 var appRootDir = path.dirname(require.main.filename);

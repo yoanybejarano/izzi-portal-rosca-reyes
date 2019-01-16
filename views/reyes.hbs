@@ -1,3 +1,40 @@
+<style>
+    * {
+        box-sizing: border-box;
+    }
+
+    #myInput {
+        background-position: 10px 12px;
+        background-repeat: no-repeat;
+        width: 100%;
+        font-size: 16px;
+        padding: 12px 20px 12px 40px;
+        border: 1px solid #ddd;
+        margin-bottom: 12px;
+    }
+
+    #myUL {
+        list-style-type: none;
+        padding: 0;
+        margin: 0;
+    }
+
+    #myUL li a {
+        border: 1px solid #ddd;
+        margin-top: -1px; /* Prevent double borders */
+        background-color: #f6f6f6;
+        padding: 12px;
+        text-decoration: none;
+        font-size: 18px;
+        color: black;
+        display: block
+    }
+
+    #myUL li a:hover:not(.header) {
+        background-color: #eee;
+    }
+</style>
+
 <div class="container mt-5 mb-5">
     <div class="row">
         <div class="col-6">
@@ -14,16 +51,12 @@
     <div class="container">
 
         <div class="row">
-            {{#bigger evento.length 0}}
-                {{#bigger perfiles.length 0}}
-                    <div class="col-sm-8">
-                        <p class="mt-2 mb-5">
-                            <a href="/roscadereyes/slider" target="_blank">Ver todas las fotos</a>
-                            <!--<a href="#" class="load-gallery">Ver todas las fotos</a>-->
-                        </p>
-                    </div>
-                {{/bigger}}
-            {{/bigger}}
+            <div class="col-sm-8">
+                <p class="mt-2 mb-5">
+                    <a href="/roscadereyes/slider" target="_blank">Ver todas las fotos</a>
+                    <!--<a href="#" class="load-gallery">Ver todas las fotos</a>-->
+                </p>
+            </div>
             <div class="col-sm-8">
                 <div class="h1 mb-5">Evento</div>
             </div>
@@ -38,7 +71,8 @@
             {{/length}}
 
             {{#each evento as |file index|}}
-                <div class="photo-element {{#bigger index 8}}hidden{{/bigger}}">
+                <!--<div class="photo-element {{#bigger index 8}}hidden{{/bigger}}">-->
+                <div class="photo-element">
                     <a href="{{file.archivoDir}}" target="_blank">
                         <img src={{file.archivoDir}} alt="{{index}}">
                     </a>
@@ -49,6 +83,7 @@
         </div>
     </div>
     <br>
+
     <div class="container">
         <div class="row">
             <div class="col-sm-8">
@@ -61,6 +96,28 @@
             </div>
         </div>
         <div class="gallery-grid">
+            <div class="col-12 col-xs-12">
+                <table id="empleadosAdmin" class="" style="width:100%">
+                    <thead>
+                    <tr>
+                        <th>Nombre</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+
+                    {{#each perfiles as |empleado index|}}
+                        <tr>
+                            <td>{{empleado}}</td>
+                        </tr>
+                    {{/each}}
+
+                    </tbody>
+                    <tfoot>
+                    </tfoot>
+                </table>
+            </div>
+        </div>
+        <div class="gallery-grid">
 
             {{#length perfiles 0}}
                 <p class="mt-2 mb-5" style="font-style: italic">
@@ -68,15 +125,69 @@
                 </p>
             {{/length}}
 
-            {{#each perfiles as |file index|}}
-                <div class="photo-element {{#bigger index 8}}hidden{{/bigger}}">
-                    <a href="{{file.direccion}}" target="_blank">
-                        <img src={{file.direccion}} alt="{{index}}">
-                    </a>
-                    <span class="info">{{file.empleado.nombre}} {{file.empleado.apellidos}}</span>
-                </div>
-            {{/each}}
+
+            <!--<input type="text" id="myInput" onkeyup="myFunction()" placeholder="Buscar...">-->
+            <!--<br>-->
+            <!--<br>-->
+
+        </div>
+        <div class="gallery-grid">
+            <ul id="myUL">
+
+                <!--{{#each perfiles as |empleado index|}}-->
+
+                    <!--<li><a>{{empleado}}</a></li>-->
+
+                <!--{{/each}}-->
+
+
+            </ul>
 
         </div>
     </div>
 </section>
+
+
+
+
+<script>
+    function myFunction() {
+        // Declare variables
+        var input, filter, ul, li, a, i, txtValue;
+        input = document.getElementById('myInput');
+        filter = input.value.toUpperCase();
+        ul = document.getElementById("myUL");
+        li = ul.getElementsByTagName('li');
+
+        // Loop through all list items, and hide those who don't match the search query
+        for (i = 0; i < li.length; i++) {
+            a = li[i].getElementsByTagName("a")[0];
+            txtValue = a.textContent || a.innerText;
+            if (txtValue.toUpperCase().indexOf(filter) > -1) {
+                li[i].style.display = "";
+            } else {
+                li[i].style.display = "none";
+            }
+        }
+    }
+
+    $(document).ready(function () {
+        $('#empleadosAdmin').DataTable({
+            "language": {
+                "lengthMenu": "Mostrar _MENU_ resultados por pagina",
+                "zeroRecords": "No se encontraron resultados",
+                "info": "Mostrando pagina _PAGE_ de _PAGES_",
+                "infoEmpty": "No hay resultados",
+                "infoFiltered": "(Filtrado de un total de _MAX_ filas)",
+                "search": "Busqueda:",
+                "paginate": {
+                    "first": "Primera",
+                    "last": "Ultima",
+                    "next": "Proxima",
+                    "previous": "Previa"
+                }
+            }
+        });
+    });
+
+</script>

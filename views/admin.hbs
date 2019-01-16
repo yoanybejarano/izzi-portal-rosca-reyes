@@ -1,52 +1,37 @@
-<style type="text/css">
-    * { box-sizing: border-box; }
-    body {
-        font: 16px Arial;
+<style>
+    * {
+        box-sizing: border-box;
     }
-    .autocomplete {
-        /*the container must be positioned relative:*/
-        position: relative;
-        display: inline-block;
-    }
-    input {
-        border: 1px solid transparent;
-        background-color: #f1f1f1;
-        padding: 10px;
-        font-size: 16px;
-    }
-    input[type=text] {
-        background-color: #f1f1f1;
+
+    #myInput {
+        background-position: 10px 12px;
+        background-repeat: no-repeat;
         width: 100%;
+        font-size: 16px;
+        padding: 12px 20px 12px 40px;
+        border: 1px solid #ddd;
+        margin-bottom: 12px;
     }
-    input[type=submit] {
-        background-color: DodgerBlue;
-        color: #fff;
+
+    #myUL {
+        list-style-type: none;
+        padding: 0;
+        margin: 0;
     }
-    .autocomplete-items {
-        position: absolute;
-        border: 1px solid #d4d4d4;
-        border-bottom: none;
-        border-top: none;
-        z-index: 99;
-        /*position the autocomplete items to be the same width as the container:*/
-        top: 100%;
-        left: 0;
-        right: 0;
+
+    #myUL li a {
+        border: 1px solid #ddd;
+        margin-top: -1px; /* Prevent double borders */
+        background-color: #f6f6f6;
+        padding: 12px;
+        text-decoration: none;
+        font-size: 18px;
+        color: black;
+        display: block
     }
-    .autocomplete-items div {
-        padding: 10px;
-        cursor: pointer;
-        background-color: #fff;
-        border-bottom: 1px solid #d4d4d4;
-    }
-    .autocomplete-items div:hover {
-        /*when hovering an item:*/
-        background-color: #e9e9e9;
-    }
-    .autocomplete-active {
-        /*when navigating through the items using the arrow keys:*/
-        background-color: DodgerBlue !important;
-        color: #ffffff;
+
+    #myUL li a:hover:not(.header) {
+        background-color: #eee;
     }
 </style>
 <div class="container mt-5 mb-5">
@@ -72,8 +57,7 @@
 </section>
 
 <section class="form-ganadores" id="sectionFormGanadores">
-    <form id="form_ganadores" novalidate="novalidate" action="/roscadereyes/empleado/seleccionar/"
-          enctype="multipart/form-data" method="post">
+    <form id="form_ganadores" action="/roscadereyes/empleado/seleccionar/" enctype="multipart/form-data" method="post">
         <div class="container">
             <div class="row">
                 <div class="col-sm-12">
@@ -83,51 +67,46 @@
             <div class="row">
                 <div class="col-md-4">
                     <div class="ctrl-holder">
-                        <label for="ganadores_empleado">Número de empleado</label>
+                        <label for="ganadores">Número de empleado</label>
                         <input type="text" name="ganadores" id="ganadores" onblur="fillDatos();">
-                        <!--<select name="ganadores" id="ganadores" required="" onchange="fillDatos();">-->
-
-                        <!--</select>-->
                     </div>
                 </div>
                 <div class="col-md-4">
                     <div class="ctrl-holder">
-                        <label for="filtroEmpleadosAdmin">Nombre</label>
-                        <input type="text" name="ganadores_nombre" id="ganadores_nombre" required="" disabled>
-                    </div>
-                </div>
-                <div class="col-md-4">
-                    <div class="select-holder">
-                        <label for="filtroRegiones">Región</label>
-                        <select name="filtroRegionFoto" id="filtroRegionFoto" required="">
-                            {{#each usuarioRegion}}
-                                <option value="{{this._id}}">{{this.nombre}}</option>
-                            {{/each}}
-                        </select>
+                        <label for="ganadores_nombre">Nombre</label>
+                        <input type="text" name="ganadores_nombre" id="ganadores_nombre" required>
                     </div>
                 </div>
                 <div class="col-md-4">
                     <div class="ctrl-holder">
-                        <label for="localidadPerfil">Localidad</label>
-                        <input type="text" name="localidad" id="localidad" required="" disabled>
+                        <label for="filtroRegionFoto">Región</label>
+                        <input type="text" name="filtroRegionFoto" id="filtroRegionFoto" required readonly="readonly">
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="ctrl-holder">
+                        <label for="localidad">Localidad</label>
+                        <input type="text" name="localidad" id="localidad" required readonly="readonly">
                     </div>
                 </div>
                 <div class="col-md-4">
                     <div class="ctrl-holder">
                         <label for="antiguedad">Antigüedad </label>
-                        <input type="text" name="antiguedad" id="antiguedad" required="" disabled>
+                        <input type="text" name="antiguedad" id="antiguedad" required readonly="readonly">
                     </div>
                 </div>
                 <div class="col-md-4">
                     <div class="ctrl-holder">
                         <label for="photo">Foto</label>
-                        <input type="file" name="photo" id="photoPerfil" >
+                        <input type="file" name="photo" id="photoPerfil">
                     </div>
                 </div>
             </div>
             <div class="row">
                 <div class="col-sm-4">
-                    <button id="submitEmpleado" class="button pink expand mt-0" type="submit" disabled="disabled">Guardar Empleado</button>
+                    <button id="submitEmpleado" class="button pink expand mt-0" type="submit" disabled="disabled">
+                        Guardar Empleado
+                    </button>
                 </div>
             </div>
         </div>
@@ -135,7 +114,7 @@
 </section>
 
 <section class="form-ganadores" id="sectionFormGanadoresEvento">
-    <form id="form_ganadores_evento" action="/roscadereyes/upload/" novalidate="novalidate"
+    <form id="form_ganadores_evento" action="/roscadereyes/upload/"
           enctype="multipart/form-data" method="post">
         <div class="container">
             <div class="row">
@@ -147,23 +126,28 @@
                 <div class="col-md-4">
                     <div class="select-holder">
                         <label for="filtroRegiones">Región</label>
-                        <select name="filtroRegionFotoEvento" id="filtroRegionFotoEvento" required="">
-                            {{#each usuarioRegion}}
+                        <select name="filtroRegionFotoEvento" id="filtroRegionFotoEvento" required
+                                onchange="cargarLocalidadesPorRegion();">
+                            <option>Seleccione</option>
+                            {{#each regionesDisponibles}}
                                 <option value="{{this._id}}">{{this.nombre}}</option>
                             {{/each}}
                         </select>
                     </div>
                 </div>
                 <div class="col-md-4">
-                    <div class="ctrl-holder">
+                    <div class="select-holder">
                         <label for="localidad">Localidad</label>
-                        <input type="text" name="localidad" id="localidad" required="">
+                        <!--<input type="text" name="localidad" id="localidad" required="">-->
+                        <select name="localidadEvento" id="localidadEvento">
+
+                        </select>
                     </div>
                 </div>
                 <div class="col-md-4">
                     <div class="ctrl-holder">
                         <label for="photo">Foto</label>
-                        <input type="file" name="photo" id="photoEvento" required="">
+                        <input type="file" name="photo" id="photoEvento" required>
                     </div>
                 </div>
             </div>
@@ -317,63 +301,18 @@
 
 </section>
 
-<section class="consulta">
-    <div class="container">
-        <br>
-
-        <!--<div class="row">-->
-        <!--<div class="col-12 col-xs-12">-->
-        <!--<table id="empleadosAdmin" class="" style="width:100%">-->
-        <!--<thead>-->
-        <!--<tr>-->
-        <!--<th data-field="noEmpleado">No.</th>-->
-        <!--<th data-field="nombre">Nombre</th>-->
-        <!--<th data-field="apellidos">Apellidos</th>-->
-        <!--<th data-field="area">Area</th>-->
-        <!--<th data-field="region">Region</th>-->
-        <!--<th data-field="seleccionado">Seleccionado</th>-->
-        <!--<th data-field="rol">Rol</th>-->
-        <!--</tr>-->
-        <!--</thead>-->
-        <!--<tbody>-->
-            <!--{{#each empleados}}-->
-        <!--<tr>-->
-        <!--<td>{{this.noEmpleado}}</td>-->
-        <!--<td>{{this.nombre}}</td>-->
-        <!--<td>{{this.apellidos}}</td>-->
-        <!--<td>{{this.area}}</td>-->
-        <!--<td>{{this.region.nombre}}</td>-->
-        <!--<td><input type="checkbox" {{#if this.seleccionado}}checked{{/if}}-->
-        <!--onclick="cambiarEstatusEmpleado({{this.noEmpleado}}, {{this.seleccionado}});">-->
-        <!--</td>-->
-        <!--<td>{{this.rol.nombre}}</td>-->
-        <!--</tr>-->
-            <!--{{/each}}-->
-        <!--</tbody>-->
-        <!--<tfoot>-->
-        <!--</tfoot>-->
-        <!--</table>-->
-        <!--</div>-->
-        <!--</div>-->
-
-    </div>
-</section>
 
 <section class="rosca-galeria">
 
     <div class="container">
 
         <div class="row">
-            {{#bigger evento.length 0}}
-                {{#bigger perfiles.length 0}}
-                    <div class="col-sm-8">
-                        <p class="mt-2 mb-5">
-                            <a href="/roscadereyes/slider" target="_blank">Ver todas las fotos</a>
-                            <!--<a href="#" class="load-gallery">Ver todas las fotos</a>-->
-                        </p>
-                    </div>
-                {{/bigger}}
-            {{/bigger}}
+            <div class="col-sm-8">
+                <p class="mt-2 mb-5">
+                    <a href="/roscadereyes/slider" target="_blank">Ver todas las fotos</a>
+                    <!--<a href="#" class="load-gallery">Ver todas las fotos</a>-->
+                </p>
+            </div>
             <div class="col-sm-8">
                 <div class="h1 mb-5">Evento</div>
             </div>
@@ -390,6 +329,7 @@
 
             {{#each evento as |file index|}}
                 <div class="photo-element {{#bigger index 8}}hidden{{/bigger}}">
+                    <!--<div class="photo-element">-->
                     <a href="{{file.archivoDir}}" target="_blank">
                         <img src={{file.archivoDir}} alt="{{index}}">
                     </a>
@@ -419,18 +359,54 @@
                 </p>
             {{/length}}
 
-            {{#each perfiles as |file index|}}
-                <div class="photo-element {{#bigger index 8}}hidden{{/bigger}}">
-                    <a href="{{file.direccion}}" target="_blank">
-                        <img src={{file.direccion}} alt="{{index}}">
-                    </a>
-                    <span class="info">{{file.empleado.nombre}} {{file.empleado.apellidos}}</span>
-                </div>
-            {{/each}}
 
+            <!--<input type="text" id="myInput" onkeyup="myFunction()" placeholder="Buscar...">-->
+            <!--<br>-->
+            <!--<br>-->
+
+        </div>
+        <div class="gallery-grid">
+            <ul id="myUL">
+
+                <!--{{#each perfiles as |empleado index|}}-->
+                    <!--<li><a>{{empleado}}</a></li>-->
+                <!--{{/each}}-->
+
+            </ul>
         </div>
     </div>
 </section>
+
+<section class="consulta">
+    <div class="container">
+        <br>
+
+        <div class="row">
+            <div class="col-12 col-xs-12">
+                <table id="empleadosAdmin" class="" style="width:100%">
+                    <thead>
+                    <tr>
+                        <th>Nombre</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+
+                    {{#each perfiles as |empleado index|}}
+                        <tr>
+                            <td>{{empleado}}</td>
+                        </tr>
+                    {{/each}}
+
+                    </tbody>
+                    <tfoot>
+                    </tfoot>
+                </table>
+            </div>
+        </div>
+
+    </div>
+</section>
+
 
 
 {{#each scripts}}
@@ -443,5 +419,47 @@
     // listEmpleadosParaFotos();
     // listRegionesParaFotos();
     cargarFormularios();
+
     // loadIds();
+
+    function myFunction() {
+        // Declare variables
+        var input, filter, ul, li, a, i, txtValue;
+        input = document.getElementById('myInput');
+        filter = input.value.toUpperCase();
+        ul = document.getElementById("myUL");
+        li = ul.getElementsByTagName('li');
+
+        // Loop through all list items, and hide those who don't match the search query
+        for (i = 0; i < li.length; i++) {
+            a = li[i].getElementsByTagName("a")[0];
+            txtValue = a.textContent || a.innerText;
+            if (txtValue.toUpperCase().indexOf(filter) > -1) {
+                li[i].style.display = "";
+            } else {
+                li[i].style.display = "none";
+            }
+        }
+    }
+
+    $(document).ready(function () {
+        $('#empleadosAdmin').DataTable({
+            "language": {
+                "lengthMenu": "Mostrar _MENU_ resultados por pagina",
+                "zeroRecords": "No se encontraron resultados",
+                "info": "Mostrando pagina _PAGE_ de _PAGES_",
+                "infoEmpty": "No hay resultados",
+                "infoFiltered": "(Filtrado de un total de _MAX_ filas)",
+                "search": "Busqueda:",
+                "paginate": {
+                    "first": "Primera",
+                    "last": "Ultima",
+                    "next": "Proxima",
+                    "previous": "Previa"
+                }
+            }
+        });
+    });
+
+
 </script>

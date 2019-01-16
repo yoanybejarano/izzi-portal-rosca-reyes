@@ -5,6 +5,7 @@ const path = require('path');
 const fs = require('fs');
 const appRootDir = path.dirname(require.main.filename);
 const startPath = appRootDir + '/views/roscadereyes' + process.env.UPLOADS_FOLDER;
+const _ = require('lodash');
 
 
 const FotoSchema = new mongoose.Schema({
@@ -71,8 +72,20 @@ datosFotos = () => {
     });
 };
 
+// datosFotosPerfiles = () => {
+//     return Foto.find({'empleado': {$ne: null}}, {empleado: 1, region: 1, localidad: 1}, (err, fotos) => {
+//         if (err) {
+//             return Promise.reject({
+//                 message: 'Error consultando las fotos.',
+//                 error: err
+//             });
+//         }
+//         return fotos;
+//     });
+// };
+
 datosFotosPerfiles = () => {
-    return Foto.find({ 'empleado': { $ne: null } }, (err, fotos) => {
+    return Foto.distinct('empleado', (err, fotos) => {
         if (err) {
             return Promise.reject({
                 message: 'Error consultando las fotos.',
@@ -84,7 +97,7 @@ datosFotosPerfiles = () => {
 };
 
 datosFotosEvento = () => {
-    return Foto.find({ 'empleado': { $eq: null } }, (err, fotos) => {
+    return Foto.find({'empleado': {$eq: null}}, (err, fotos) => {
         if (err) {
             return Promise.reject({
                 message: 'Error consultando las fotos.',
@@ -92,21 +105,28 @@ datosFotosEvento = () => {
             });
         }
         return fotos;
-    });
+    }).sort({$natural: -1}).limit(8);
 };
 
 salvarFoto = (req, res) => {
+    let localidad = '';
+    if (req.body.localidad && req.body.localidad !== 'Seleccione') {
+        localidad = req.body.localidad;
+    } else if (req.body.localidadEvento && req.body.localidadEvento !== 'Seleccione') {
+        localidad = req.body.localidadEvento;
+    }else {
+        localidad = null;
+    }
     const empleado = req.body.filtroEmpleadosFoto;
-    const archivo = req.file.originalname;
-    const region = {"_id": req.body.filtroRegionFoto, "nombre": req.body.regionObject.nombre};
-    const localidad = req.body.localidad;
+    const archivo = req.file.filename;
+    const region = req.body.regionObject;
     let foto = new Foto({archivo, empleado, region, localidad});
     foto._id = new ObjectID();
     foto.save();
     res.status(200).redirect('/roscadereyes/admin');
 };
 
-salvarFotoPerfil = (filtroEmpleadosFoto,nombreArchivo,filtroRegionFoto, nombreRegion ) => {
+salvarFotoPerfil = (filtroEmpleadosFoto, nombreArchivo, filtroRegionFoto, nombreRegion) => {
     const empleado = ObjectID(filtroEmpleadosFoto);
     const archivo = nombreArchivo;
     const region = {"_id": filtroRegionFoto, "nombre": nombreRegion};
@@ -137,16 +157,26 @@ listaDatosArchivosEvento = async (region) => {
             const datosFoto = fotos.filter((item) => {
                 return item.archivo === element
             });
-            if (datosFoto[0]){
-                const viewArchivo = {
-                    "datosArchivo": datosFoto[0],
-                    "archivoDir": '/roscadereyes' + process.env.UPLOADS_FOLDER + '/' + datosFoto[0].archivo
-                };
-                viewData.push(viewArchivo);
+            // if (datosFoto[0]){
+            //     const viewArchivo = {
+            //         "datosArchivo": datosFoto[0],
+            //         "archivoDir": '/roscadereyes' + process.env.UPLOADS_FOLDER + '/' + datosFoto[0].archivo
+            //     };
+            //     viewData.push(viewArchivo);
+            // }
+            if (datosFoto.length > 0) {
+                datosFoto.forEach((element, index) => {
+                    const viewArchivo = {
+                        "datosArchivo": element,
+                        "archivoDir": '/roscadereyes' + process.env.UPLOADS_FOLDER + '/' + datosFoto[0].archivo
+                    };
+                    viewData.push(viewArchivo);
+                });
             }
         });
     }
     return viewData.reverse();
+
 };
 
 listaDatosArchivosPerfiles = async (region) => {
@@ -165,22 +195,46 @@ listaDatosArchivosPerfiles = async (region) => {
         return;
     }
 
-    const archivosFotos = fs.readdirSync(startPath);
-    if (archivosFotos.length > 0 && fotos.length > 0) {
-        archivosFotos.forEach((element, index) => {
-            const datosFoto = fotos.filter((item) => {
-                return item.archivo === element
-            });
-            if (datosFoto[0]){
-                const viewArchivo = {
-                    "datosArchivo": datosFoto[0],
-                    "archivoDir": '/roscadereyes' + process.env.UPLOADS_FOLDER + '/' + datosFoto[0].archivo
-                };
-                viewData.push(viewArchivo);
-            }
-        });
-    }
-    return viewData.reverse();
+    // const archivosFotos = fs.readdirSync(startPath);
+    // if (archivosFotos.length > 0 && fotos.length > 0) {
+    //     archivosFotos.forEach((element, index) => {
+    //         const datosFoto = fotos.filter((item) => {
+    //             return item.archivo === element
+    //         });
+    //         if (datosFoto.length > 0) {
+    //             datosFoto.forEach((element, index) => {
+    //                 const viewArchivo = {
+    //                     "datosArchivo": element,
+    //                     "archivoDir": '/roscadereyes' + process.env.UPLOADS_FOLDER + '/' + datosFoto[0].archivo
+    //                 };
+    //                 viewData.push(viewArchivo);
+    //             });
+    //         }
+    //     });
+    // }
+
+    // const employees = _.map(
+    //     _.uniq(
+    //         _.map(fotos, function(obj){
+    //             return JSON.stringify(obj.empleado);
+    //         })
+    //     ), function(obj) {
+    //         return JSON.parse(obj);
+    //     }
+    // );
+
+    // if (employees.length > 0) {
+    //     employees.forEach((element, index) => {
+    //         const viewArchivo = {
+    //             "datosArchivo": element
+    //         };
+    //         viewData.push(viewArchivo);
+    //     });
+    // }
+
+    // return viewData.reverse();
+
+    return fotos;
 };
 
 listaArchivos = async (req, res) => {

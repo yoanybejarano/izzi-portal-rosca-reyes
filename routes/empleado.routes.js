@@ -1,6 +1,7 @@
 let empleados = require('../models/empleado.model');
 let roles = require('../models/rol.model');
 let premios = require('../models/premio.model');
+let regiones = require('../models/region.model');
 let {authenticate} = require('../middleware/authenticate');
 let limites = require('../models/limites.model');
 let fotos = require('../models/foto.model');
@@ -56,23 +57,13 @@ module.exports = function (app) {
 
             const datosArchivosEvento = await fotos.listaDatosArchivosEvento();
             const datosArchivosPerfiles = await fotos.listaDatosArchivosPerfiles();
-            const ids = datosArchivosPerfiles.map(a => a.datosArchivo.empleado);
-            const empleadosPerfiles = await empleados.datosEmpleadosById(ids);
-            const empleadosPerfil = [];
-            datosArchivosPerfiles.forEach(function (item, index) {
-                let empleadoObject = {};
-                const id = item.datosArchivo.empleado;
-                const empleado = _.find(empleadosPerfiles, {_id: id});
-                if (empleado) {
-                    empleadoObject.direccion = item.archivoDir;
-                    empleadoObject.empleado = empleado;
-                    empleadosPerfil.push(empleadoObject);
-                }
-            });
+            const empleadosPerfiles = await empleados.datosEmpleadosById(datosArchivosPerfiles);
+            const empleadosPerfil = _.map(empleadosPerfiles, 'nombre');
             const limite = await limites.datosLimiteByNombre('Seleccionados');
             req.body.datosArchivosEvento = datosArchivosEvento;
             req.body.empleadosPerfil = empleadosPerfil;
             req.body.limitesSeleccion = limite;
+            req.body.regiones = await regiones.datosRegiones();
             empleados.login(req, res);
         });
 
@@ -118,35 +109,24 @@ module.exports = function (app) {
         .get(async (req, res) => {
             const datosArchivosEvento = await fotos.listaDatosArchivosEvento();
             const datosArchivosPerfiles = await fotos.listaDatosArchivosPerfiles();
-            const ids = datosArchivosPerfiles.map(a => a.datosArchivo.empleado);
-            const empleadosPerfiles = await empleados.datosEmpleadosById(ids);
-            const empleadosPerfil = [];
-            datosArchivosPerfiles.forEach(function (item, index) {
-                let empleadoObject = {};
-                const id = item.datosArchivo.empleado;
-                const empleado = _.find(empleadosPerfiles, {_id: id});
-                if (empleado) {
-                    empleadoObject.direccion = item.archivoDir;
-                    empleadoObject.empleado = empleado;
-                    empleadosPerfil.push(empleadoObject);
-                }
-            });
+            const empleadosPerfiles = await empleados.datosEmpleadosById(datosArchivosPerfiles);
+            const empleadosPerfil = _.map(empleadosPerfiles, 'nombre');
             const token = store.get('x-auth');
             const empleadoResult = await empleados.findByTokenCode(token);
             const regionUsuario = [empleadoResult.region];
             var scripts = [
-                {script: '/rosca/assets/js/vendor/jquery.js'},
                 {script: 'https://momentjs.com/downloads/moment-with-locales.js'},
-                {script: '/rosca/assets/js/client.js'},
+                {script: '/rosca/assets/js/client.js'}
             ];
             const limite = await limites.datosLimiteByNombre('Seleccionados');
             const cantidadSeleccionados = await empleados.countSelectedEmployeesByRegion(empleadoResult.region._id);
+            const regionesDisponibles = await regiones.datosRegiones();
             res.render('admin', {
                 evento: datosArchivosEvento,
                 perfiles: empleadosPerfil,
-                usuarioRegion: regionUsuario,
-                scripts: scripts, rol:
-                empleadoResult.rol.nombre,
+                regionesDisponibles: regionesDisponibles,
+                scripts: scripts,
+                rol: empleadoResult.rol.nombre,
                 seleccionados: cantidadSeleccionados,
                 limitesSeleccion: limite
             });
@@ -231,6 +211,16 @@ module.exports = function (app) {
             empleados.findByNoEmpleadoAndRegion(req, res);
         });
 
+    app.route("/roscadereyes/empleado/localidades/:regionId")
+        .all((req, res, next) => {
+            // Middleware for preexecution of routes\
+            delete req.body.id;
+            next();
+        })
+        .get((req, res) => {
+            // "/empleado": List Empleado
+            empleados.listaLocalidadesPorRegion(req, res);
+        });
 
 
 };

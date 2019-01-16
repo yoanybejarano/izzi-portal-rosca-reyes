@@ -317,7 +317,7 @@ function cargarFormularios() {
 
 function listEmpleadosParaFotos() {
     $("#ganadores").prop('selectedIndex', 0);
-    var regionId = $('#filtroRegionFoto option:selected').val();
+    var regionId = $('#filtroRegionFoto').val();
     $.ajax({
         url: "/roscadereyes/empleado/region/" + regionId
     }).then(function (data) {
@@ -340,12 +340,12 @@ function listEmpleadosParaFotos() {
 
 function fillDatos() {
     var noEmpleado = $('#ganadores').val();
-    var regionId = $('#filtroRegionFoto option:selected').val();
     $.ajax({
-        url: "/roscadereyes/empleado/" + noEmpleado + "/region/" + regionId
+        url: "/roscadereyes/empleado/" + noEmpleado
     }).then(function (data) {
         if(data.empleado){
             $('#ganadores_nombre').val(data.empleado.nombre);
+            $('#filtroRegionFoto').prop('selectedIndex', 0).val(data.empleado.region.nombre);
             $('#localidad').val(data.empleado.localidad);
             if (data.empleado.antiguedad) {
                 var format = moment(data.empleado.antiguedad)._f;
@@ -369,6 +369,23 @@ function loadIds() {
         url: "/roscadereyes/empleadoids/" + regionId
     }).then(function (data) {
         autocomplete(document.getElementById("ganadores"), data.identificadores.map(e => e.noEmpleado));
+    });
+}
+
+function cargarLocalidadesPorRegion() {
+    var regionId = $('#filtroRegionFotoEvento').val();
+    $.ajax({
+        url: "/roscadereyes/empleado/localidades/" + regionId
+    }).then(function (data) {
+
+        var localidades = $('#localidadEvento');
+        localidades.empty();
+        localidades.append($("<option />").text('Seleccione'));
+        $.each(data.localidades, function (index, item) {
+            console.log(item.localidad)
+            var option = $("<option />").val(item.localidad).text(item.localidad);
+            localidades.append(option);
+        });
     });
 }
 

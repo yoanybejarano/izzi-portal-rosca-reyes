@@ -83,7 +83,6 @@ datosRegionByNombre = (nombre) => {
     });
 };
 
-
 module.exports = {
     list,
     findById,
